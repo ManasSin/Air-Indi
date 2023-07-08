@@ -1,7 +1,45 @@
-import React from "react";
-import { Button } from "../ui";
+import { useState } from "react";
+import { Button, InputField } from "../ui";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
+  const [credentials, setCredentials] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+  });
+
+  const handleChange = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+
+    setCredentials({ ...credentials, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // setCredentials({
+    //   name: "",
+    //   email: "",
+    //   password: "",
+    //   phone: "",
+    // });
+    sendSignup();
+  };
+
+  const sendSignup = async () => {
+    try {
+      const data = credentials;
+
+      await axios.post("/user/signup", data);
+      console.log("success signup");
+    } catch (err) {
+      alert("sign up failed");
+    }
+  };
+
   const closeIcon = (
     <svg
       width="1em"
@@ -18,8 +56,8 @@ const Signup = () => {
   );
   return (
     <main className="sm:px-5 lg:px-12 px-5 flex items-center justify-center flex-grow">
-      <article className="grid grid-rows-[minmax(min-content,auto)_1fr] grid-col-1 max-w-md w-full -translate-y-1/4 max-h-fit border rounded-xl">
-        <header className="flex items-center justify-center border-b px-3 py-4 h-fit">
+      <article className="grid grid-rows-[minmax(min-content,auto)] grid-col-1 max-w-md w-full -translate-y-[17%] max-h-fit border rounded-xl">
+        <header className="flex items-center justify-center border-b px-5 py-4 h-fit">
           <Button
             outline={true}
             icon={closeIcon}
@@ -31,53 +69,62 @@ const Signup = () => {
             Log in or Sign up
           </h3>
         </header>
-        <main className="flex flex-col gap-4 w-full min-h-fit px-5 py-6">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4 w-full min-h-fit px-5 py-6"
+        >
           <p className="font-semibold text-xl mt-4">Register with us</p>
           <div className="flex gap-3 flex-col">
-            <label htmlFor="email" className="text-xs font-medium -mb-2">
-              Your Name
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Singh sha"
-              className="placeholder:font-light placeholder:text-sm w-full py-1 border px-3 rounded-md"
+            <InputField
+              name={"name"}
+              label={"Enter your Name"}
+              placeholder={"Sha Singh"}
+              onChange={handleChange}
+              state={credentials.name}
+              type={"text"}
             />
-            <label htmlFor="email" className="text-xs font-medium -mb-2">
-              Enter Your Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              className="placeholder:font-light placeholder:text-sm w-full py-1 border px-3 rounded-md"
+            <InputField
+              name={"email"}
+              label={"Enter your Email"}
+              placeholder={"you@example.com"}
+              onChange={handleChange}
+              state={credentials.email}
+              type={"email"}
             />
-            <label htmlFor="password" className="text-xs font-medium -mb-2">
-              Enter Your Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="password"
-              className="placeholder:font-light placeholder:text-sm w-full py-1 border px-3 rounded-md"
+            <InputField
+              name={"password"}
+              label={"Create your Password"}
+              placeholder={"*************"}
+              onChange={handleChange}
+              state={credentials.password}
+              type={"password"}
             />
-            <label htmlFor="phone" className="text-xs font-medium -mb-2">
-              Phone Number
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              autoComplete="off"
-              placeholder="Phone Number"
-              className="placeholder:font-light placeholder:text-sm w-full py-1 border px-3 rounded-md"
+            <InputField
+              name={"phone"}
+              label={"Enter your Phone"}
+              placeholder={"Phone number"}
+              onChange={handleChange}
+              state={credentials.phone}
+              type={"tel"}
             />
           </div>
           <p className="font-thin text-xs tracking-normal">
             * Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Necessitatibus rem repudiandae sit
           </p>
-          <Button onClick={() => {}} icon={false} label={"Continue"} />
-        </main>
+          <Button type={"submit"} icon={false} label={"Sign up"} />
+          {/* <button>signup</button> */}
+        </form>
+        <div className="px-5 py-4 flex items-center justify-center border-t">
+          <p className="text-sm font-semibold tracking-wide">
+            Already login?{" "}
+            <span>
+              <Link className="hover:underline hover:text-rose-600" to="/login">
+                Login
+              </Link>
+            </span>
+          </p>
+        </div>
       </article>
     </main>
   );

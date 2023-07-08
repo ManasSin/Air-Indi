@@ -1,8 +1,9 @@
 import React from "react";
 
 const Button = ({
+  type = null,
   label,
-  onClick,
+  onClick = null,
   disabled = false,
   outline = false,
   small = false,
@@ -11,6 +12,7 @@ const Button = ({
 }) => {
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`
