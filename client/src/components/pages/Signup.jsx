@@ -33,7 +33,7 @@ const Signup = () => {
     try {
       const data = credentials;
 
-      await axios.post("/user/signup", data);
+      await axios.post("/api/user/signup", data);
       console.log("success signup");
     } catch (err) {
       alert("sign up failed");

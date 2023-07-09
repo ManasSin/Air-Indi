@@ -33,8 +33,8 @@ const Login = () => {
     const data = credentials;
 
     try {
-      await axios.post("/user/login", data);
-      console.log("success login");
+      await axios.post("/api/user/login", data);
+      alert("success login");
     } catch (err) {
       alert("login failed");
     }
