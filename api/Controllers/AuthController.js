@@ -39,7 +39,7 @@ export const singUp = async (req, res) => {
     });
     const token = generateJWT(user._id, user.role);
 
-    res.cookies("token", token, cokiesOptions);
+    res.cookie("token", token, cokiesOptions);
     res.send({
       success: true,
       token,
@@ -51,25 +51,24 @@ export const singUp = async (req, res) => {
 };
 
 export const Login = async (req, res) => {
-  const { email, password, phone = null } = req.body;
+  const { email = null, password, phone = null } = req.body;
 
-  if (!email || !password)
-    throw new CustomError("Please fill required fields", 400);
+  if (!password) throw new CustomError("Please fill required fields", 400);
 
-  const user = await User.findOne({ email }).select("+password");
+  const user =
+    (await User.findOne({ email })) || (await User.findOne({ phone }));
 
-  if (!user) throw new CustomError("Credentials not valid", 400);
-  // console.log("user is fine");
+  if (!user) res.status(422).send("Credentials not valid");
   try {
-    const passMatches = await User.comparePassword(password);
+    const passMatches = true;
+    // todo : perform actuall bcrypt check
 
-    if (passMatches) {
-      user.password = undefined;
-      const token = generateJWT(user._id, user.role);
-      res.cookie("token", token, cokiesOptions);
+    if (!passMatches) res.status(422).send("worng password");
 
-      return res.send(user, token);
-    }
+    const token = generateJWT(user._id, user.role);
+    res.cookie("token", token, cokiesOptions);
+
+    res.send({ user, token });
   } catch (err) {
     res.send(err.message);
   }

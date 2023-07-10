@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minLength: [8, "Password must be at least 8 chars"],
-      select: false,
+      // select: false,
     },
     phone: {
       type: Number,
@@ -50,7 +50,7 @@ UserSchema.methods = {
   },
 
   // generate jwt token
-  getJWTtoken() {
+  getJWTtoken: function () {
     return jwt.sign(
       { _id: this._id, role: this.role },
       process.env.JWT_SECRET,
