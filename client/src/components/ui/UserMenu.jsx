@@ -1,8 +1,11 @@
 import { useCallback, useState } from "react";
 import MenuItem from "./MenuItem";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../Hooks/userHook";
 
 const UserMenu = () => {
+  const { user } = useAuthContext();
+
   const logoGlobe = (
     <svg
       fill="none"
@@ -96,9 +99,14 @@ const UserMenu = () => {
             hover:shadow-md hover:cursor-pointer rounded-full border-2 flex items-center justify-center gap-3 ml-2  shadow-sm cursor-pointer
           "
       >
-        {menuBar}
-
-        {logoUser}
+        {user ? (
+          <p className="font-medium text-sm">{user.user.name}</p>
+        ) : (
+          <>
+            {menuBar}
+            {logoUser}
+          </>
+        )}
       </Link>
       {isOpen && (
         <div

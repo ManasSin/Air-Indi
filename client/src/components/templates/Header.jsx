@@ -39,7 +39,7 @@ const Header = () => {
         className="grid 
         tablet:grid-cols-[1fr_minmax(max-content,1fr)_minmax(max-content,1fr)] 
         sm:grid-cols-[50px_minmax(min-content,auto)_minmax(max-content,1fr)] 
-        grid-cols-[90%_10%] 
+        grid-cols-[1fr_min-content] 
         justify-center 
         items-center 
         min-w-full"

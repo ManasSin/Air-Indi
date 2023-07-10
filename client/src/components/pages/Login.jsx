@@ -1,8 +1,8 @@
-import React from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Button } from "../ui";
 import { Link } from "react-router-dom";
 import { InputField } from "../ui";
+import { useLogin } from "../Hooks/useLogin";
 
 const Login = () => {
   const [credentials, setCredentials] = React.useState({
@@ -10,6 +10,8 @@ const Login = () => {
     password: "",
     phone: "",
   });
+  const [redirect, setRedirect] = useState(false);
+  const { login, isloading, error } = useLogin();
 
   const handleChange = (e) => {
     let name = e.target.name;
@@ -18,26 +20,10 @@ const Login = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // setCredentials({
-    //   email: "",
-    //   password: "",
-    //   phone: "",
-    // });
 
-    sendLogin();
-  };
-
-  const sendLogin = async () => {
-    const data = credentials;
-
-    try {
-      await axios.post("/api/user/login", data);
-      alert("success login");
-    } catch (err) {
-      alert("login failed");
-    }
+    await login(credentials);
   };
   const closeIcon = (
     <svg
@@ -53,6 +39,7 @@ const Login = () => {
       />
     </svg>
   );
+
   return (
     <main className="sm:px-5 lg:px-12 px-5 flex items-center justify-center flex-grow">
       <article className="grid grid-rows-[minmax(min-content,auto)] grid-col-1 max-w-md w-full -translate-y-1/4 max-h-fit border rounded-xl">
@@ -86,7 +73,7 @@ const Login = () => {
               label={"Enter Your Password"}
               // placeholder={"Password"}
               name={"password"}
-              type={"password"}
+              type={"text"}
               state={credentials.password}
               onChange={handleChange}
             />
@@ -103,7 +90,12 @@ const Login = () => {
             * Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Necessitatibus rem repudiandae sit
           </p>
-          <Button type={"submit"} icon={false} label={"Continue"} />
+          <Button
+            disabled={isloading}
+            type={"submit"}
+            icon={false}
+            label={"Continue"}
+          />
         </form>
         <div className="px-5 py-4 flex items-center justify-center border-t">
           <p className="text-sm font-semibold tracking-wide">

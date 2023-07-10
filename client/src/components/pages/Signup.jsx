@@ -34,7 +34,6 @@ const Signup = () => {
       const data = credentials;
 
       await axios.post("/api/user/signup", data);
-      console.log("success signup");
     } catch (err) {
       alert("sign up failed");
     }
@@ -97,7 +96,7 @@ const Signup = () => {
               placeholder={"*************"}
               onChange={handleChange}
               state={credentials.password}
-              type={"password"}
+              type={"text"}
             />
             <InputField
               name={"phone"}
