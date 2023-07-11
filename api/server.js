@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { router as AuthRoute } from "./Routes/Auth.route.js";
+import { errorHandler } from "./Middlewares/errorHandler.js";
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use(errorHandler);
 
 // routes
 app.use("/api/user", AuthRoute);

@@ -2,6 +2,7 @@ import User from "../Modal/UserSchema.js";
 import bcrypt from "bcryptjs";
 import CustomError from "../Utils/CustomError.js";
 import jwt from "jsonwebtoken";
+import { asyncHandler } from "../Service/asyncHandler.js";
 
 export const cokiesOptions = {
   expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
@@ -16,7 +17,7 @@ const generateJWT = (_id, role) => {
 
 const bcyrptSalt = bcrypt.genSaltSync(10);
 
-export const singUp = async (req, res) => {
+export const singUp = asyncHandler(async (req, res) => {
   const { name, email, password, phone = null } = req.body;
 
   if (!name) throw new CustomError("Name is required", 400);
@@ -27,66 +28,53 @@ export const singUp = async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw new CustomError("User already exists", 400);
+    res.status(400).send("User already exists");
   }
+  const user = await User.create({
+    name,
+    email,
+    password: bcrypt.hashSync(password, bcyrptSalt),
+    phone,
+  });
+  const token = generateJWT(user._id, user.role);
 
-  try {
-    const user = await User.create({
-      name,
-      email,
-      password: bcrypt.hashSync(password, bcyrptSalt),
-      phone,
-    });
-    const token = generateJWT(user._id, user.role);
+  res.cookie("token", token, cokiesOptions);
+  res.send({
+    success: true,
+    token,
+    user,
+  });
+});
 
-    res.cookie("token", token, cokiesOptions);
-    res.send({
-      success: true,
-      token,
-      user,
-    });
-  } catch (error) {
-    res.send({ error: error.message });
-  }
-};
-
-export const Login = async (req, res) => {
+export const Login = asyncHandler(async (req, res) => {
   const { email = null, password, phone = null } = req.body;
 
   if (!password) throw new CustomError("Please fill required fields", 400);
 
   const user =
-    (await User.findOne({ email })) || (await User.findOne({ phone }));
+    (await User.findOne({ email }).select("+password")) ||
+    (await User.findOne({ phone }));
 
   if (!user) res.status(422).send("Credentials not valid");
-  try {
-    const passMatches = true;
-    // todo : perform actuall bcrypt check
 
-    if (!passMatches) res.status(422).send("worng password");
+  const passMatches = bcrypt.compare(password, user.password);
+  // todo : perform actuall bcrypt check
 
-    const token = generateJWT(user._id, user.role);
-    res.cookie("token", token, cokiesOptions);
+  if (!passMatches) res.status(422).send("worng password");
 
-    res.send({ user, token });
-  } catch (err) {
-    res.send(err.message);
-  }
-};
+  const token = generateJWT(user._id, user.role);
+  res.cookie("token", token, cokiesOptions);
 
-export const profile = async (req, res) => {
+  res.send({ user, token });
+});
+
+export const getProfile = asyncHandler(async (req, res) => {
   const { token } = req.cookies;
   if (token) {
-    jwt.verify(
-      token,
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" },
-      (err, user) => {
-        if (err) throw err;
-        res.json(user);
-      }
-    );
-  } else {
-    res.status(404);
+    const { _id } = jwt.verify(token, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    const user = await User.findById({ _id });
+    res.send({ user });
   }
-};
+});
