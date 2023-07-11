@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useAuthContext } from "./userHook";
+import { useAuthContext } from "./userAuth";
 import axios from "axios";
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [userin, setUserin] = useState(false);
   const [error, setError] = useState(null);
 
   const { dispatch } = useAuthContext();
@@ -17,6 +18,7 @@ export const useLogin = () => {
       dispatch({ type: "LOGIN", payload: data });
       setError(null);
       setIsLoading(false);
+      setUserin(true);
     }
 
     if (!data) {
@@ -25,5 +27,5 @@ export const useLogin = () => {
     }
   };
 
-  return { login, error, isLoading };
+  return { login, error, isLoading, userin };
 };

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "../ui";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { InputField } from "../ui";
-import { useLogin } from "../Hooks/useLogin";
+import { useLogin } from "../Hooks";
 
 const Login = () => {
   const [credentials, setCredentials] = React.useState({
@@ -11,7 +11,7 @@ const Login = () => {
     phone: "",
   });
   const [redirect, setRedirect] = useState(false);
-  const { login, isloading, error } = useLogin();
+  const { login, isloading, error, userin } = useLogin();
 
   const handleChange = (e) => {
     let name = e.target.name;
@@ -39,6 +39,10 @@ const Login = () => {
       />
     </svg>
   );
+
+  if (userin) {
+    return <Navigate to={"/"} />;
+  }
 
   return (
     <main className="sm:px-5 lg:px-12 px-5 flex items-center justify-center flex-grow">

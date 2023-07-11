@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button, InputField } from "../ui";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
+import { useSignup } from "../Hooks/useSignup";
 
 const Signup = () => {
   const [credentials, setCredentials] = useState({
@@ -10,6 +11,7 @@ const Signup = () => {
     password: "",
     phone: "",
   });
+  const { signup, error, isLoading, userin } = useSignup();
 
   const handleChange = (e) => {
     let name = e.target.name;
@@ -20,23 +22,13 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // setCredentials({
-    //   name: "",
-    //   email: "",
-    //   password: "",
-    //   phone: "",
-    // });
-    sendSignup();
-  };
-
-  const sendSignup = async () => {
-    try {
-      const data = credentials;
-
-      await axios.post("/api/user/signup", data);
-    } catch (err) {
-      alert("sign up failed");
-    }
+    setCredentials({
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+    });
+    signup(credentials);
   };
 
   const closeIcon = (
@@ -53,6 +45,11 @@ const Signup = () => {
       />
     </svg>
   );
+
+  if (userin) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <main className="sm:px-5 lg:px-12 px-5 flex items-center justify-center flex-grow">
       <article className="grid grid-rows-[minmax(min-content,auto)] grid-col-1 max-w-md w-full -translate-y-[17%] max-h-fit border rounded-xl">
@@ -111,8 +108,12 @@ const Signup = () => {
             * Lorem ipsum dolor sit amet consectetur adipisicing elit.
             Necessitatibus rem repudiandae sit
           </p>
-          <Button type={"submit"} icon={false} label={"Sign up"} />
-          {/* <button>signup</button> */}
+          <Button
+            disabled={isLoading}
+            type={"submit"}
+            icon={false}
+            label={"Sign up"}
+          />
         </form>
         <div className="px-5 py-4 flex items-center justify-center border-t">
           <p className="text-sm font-semibold tracking-wide">

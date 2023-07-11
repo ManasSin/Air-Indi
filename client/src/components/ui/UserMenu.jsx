@@ -1,10 +1,12 @@
 import { useCallback, useState } from "react";
 import MenuItem from "./MenuItem";
 import { Link } from "react-router-dom";
-import { useAuthContext } from "../Hooks/userHook";
+import { useAuthContext, useLogout } from "../Hooks";
+import Button from "./Button";
 
 const UserMenu = () => {
   const { user } = useAuthContext();
+  const { logout } = useLogout();
 
   const logoGlobe = (
     <svg
@@ -61,6 +63,11 @@ const UserMenu = () => {
   const toggleUserMenu = useCallback(() => {
     setIsOpen((value) => !value);
   });
+
+  const LogoutUser = () => {
+    logout();
+  };
+
   return (
     <div
       aria-describedby="user interaction with air-indi world"
@@ -101,8 +108,10 @@ const UserMenu = () => {
       >
         {user ? (
           <div className="flex items-center justify-center">
-            {/* <div className="h-9 mr-2 p-1">{menuBar}</div> */}
-            <p className="font-medium text-sm">{user.user.name.charAt(0)}</p>
+            <div className="h-9 mr-2 p-1">{menuBar}</div>
+            <p className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
+              {user.user.name.charAt(0)}
+            </p>
           </div>
         ) : (
           <>
@@ -120,17 +129,50 @@ const UserMenu = () => {
                 right-5
                 top-16
                 rounded-xl
-                w-[140px]
+                w-[170px]
                 md:w-[180px]
-                py-2
                 bg-white
                 drop-shadow-md
             "
         >
           {user ? (
             <>
-              <MenuItem setIsOpen={setIsOpen} text={"account"} />
-              <MenuItem setIsOpen={setIsOpen} text={"airbnb your home"} />
+              <div className="py-2 border-b">
+                <MenuItem setIsOpen={setIsOpen} text={"Trips"} />
+                <MenuItem
+                  setIsOpen={setIsOpen}
+                  text={"messages"}
+                  to={"guest/inbox"}
+                />
+              </div>
+              <div className="py-2 border-b">
+                <MenuItem
+                  setIsOpen={setIsOpen}
+                  text={"account"}
+                  className={"font-extralight tracking-wider text-sm"}
+                />
+                <MenuItem
+                  setIsOpen={setIsOpen}
+                  text={"airbnb your home"}
+                  to={"host/home"}
+                  className={"font-extralight tracking-wider text-sm"}
+                />
+              </div>
+              <div className="py-2 border-b">
+                <MenuItem
+                  setIsOpen={setIsOpen}
+                  text={"Help"}
+                  className="font-extralight tracking-wider text-sm"
+                />
+              </div>
+              <div className="py-2 border-b">
+                <Button
+                  label={"Log out"}
+                  onClick={LogoutUser}
+                  secondary={true}
+                  className="text-xs underline"
+                />
+              </div>
             </>
           ) : (
             <>

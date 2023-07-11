@@ -1,8 +1,9 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import { IndexPage, Layout, Login, Signup } from "./components/pages";
-import { useAuthContext } from "./components/Hooks/userHook";
+import { useAuthContext } from "./components/Hooks";
 import { useEffect } from "react";
 import axios from "axios";
+import UserAccount from "./components/pages/UserAccount";
 
 function App() {
   useEffect(() => {
@@ -22,7 +23,11 @@ function App() {
           />
           <Route
             path="/signup"
-            element={user ? <Navigate to={"/"} /> : <Login />}
+            element={user ? <Navigate to={"/"} /> : <Signup />}
+          />
+          <Route
+            path="/account"
+            element={!user ? <Navigate to={"/login"} /> : <UserAccount />}
           />
         </Route>
       </Routes>
