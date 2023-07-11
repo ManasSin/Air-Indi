@@ -49,7 +49,7 @@ export const singUp = asyncHandler(async (req, res) => {
 export const Login = asyncHandler(async (req, res) => {
   const { email = null, password, phone = null } = req.body;
 
-  if (!password) throw new CustomError("Please fill required fields", 400);
+  if (!password) res.status(400).send("required fields must be filled");
 
   const user =
     (await User.findOne({ email }).select("+password")) ||
