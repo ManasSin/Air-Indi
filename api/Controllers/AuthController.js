@@ -73,3 +73,20 @@ export const Login = async (req, res) => {
     res.send(err.message);
   }
 };
+
+export const profile = async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+      (err, user) => {
+        if (err) throw err;
+        res.json(user);
+      }
+    );
+  } else {
+    res.status(404);
+  }
+};

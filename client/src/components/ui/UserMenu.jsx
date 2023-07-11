@@ -100,7 +100,10 @@ const UserMenu = () => {
           "
       >
         {user ? (
-          <p className="font-medium text-sm">{user.user.name}</p>
+          <div className="flex items-center justify-center">
+            {/* <div className="h-9 mr-2 p-1">{menuBar}</div> */}
+            <p className="font-medium text-sm">{user.user.name.charAt(0)}</p>
+          </div>
         ) : (
           <>
             {menuBar}
@@ -117,16 +120,24 @@ const UserMenu = () => {
                 right-5
                 top-16
                 rounded-xl
-                w-[40vw]
+                w-[140px]
                 md:w-[180px]
                 py-2
                 bg-white
-                text-sm
-                shadow-md
+                drop-shadow-md
             "
         >
-          <MenuItem setIsOpen={setIsOpen} text={"Login"} />
-          <MenuItem setIsOpen={setIsOpen} text={"Signup"} />
+          {user ? (
+            <>
+              <MenuItem setIsOpen={setIsOpen} text={"account"} />
+              <MenuItem setIsOpen={setIsOpen} text={"airbnb your home"} />
+            </>
+          ) : (
+            <>
+              <MenuItem setIsOpen={setIsOpen} text={"Login"} />
+              <MenuItem setIsOpen={setIsOpen} text={"Signup"} />
+            </>
+          )}
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { router as AuthRoute } from "./Routes/Auth.route.js";
 
 const app = express();
@@ -14,48 +15,10 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+app.use(cookieParser());
 
 // routes
 app.use("/api/user", AuthRoute);
-
-// app.post("/api/user/signup", async (req, res) => {
-//   const { name, email, password, phone } = req.body;
-//   try {
-//     const user = await User.create({
-//       name,
-//       email,
-//       password: bcrypt.hashSync(password, bcyrptSalt),
-//       phone,
-//     });
-
-//     res.status(201).json(user);
-//   } catch (err) {
-//     res.status(422).json(err.messge);
-//   }
-// });
-
-// app.post("/api/user/login", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   //check if the email exist
-//   const user = await User.findOne({ email });
-//   console.log("got user");
-//   if (user) {
-//     // bcrypt pass compare
-//     const passwordCompare = bcrypt.compare(password, user.password);
-//     // console.log("got password");
-//     if (passwordCompare) {
-//       const token = createToken(user._id);
-//       // console.log(token);
-//       res.send(`user ${user} \n token ${token}`);
-//     }
-//     // console.log(user);
-//     res.send({ message: "password is wrong" });
-//   }
-//   res.send({ message: "user not found" });
-// });
-
-// booking-app
 
 //connecting with mongo
 mongoose
