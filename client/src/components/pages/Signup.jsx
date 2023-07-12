@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button, InputField } from "../ui";
 import { Link, Navigate } from "react-router-dom";
-import axios from "axios";
 import { useSignup } from "../Hooks/useSignup";
 
 const Signup = () => {
@@ -54,13 +53,15 @@ const Signup = () => {
     <main className="sm:px-5 lg:px-12 px-5 flex items-center justify-center flex-grow">
       <article className="grid grid-rows-[minmax(min-content,auto)] grid-col-1 max-w-md w-full -translate-y-[17%] max-h-fit border rounded-xl">
         <header className="flex items-center justify-center border-b px-5 py-4 h-fit">
-          <Button
-            outline={true}
-            icon={closeIcon}
-            onClick={() => {}}
-            small={true}
-            secondary={true}
-          />
+          <div className="w-7">
+            <Button
+              // outline={true}
+              icon={closeIcon}
+              onClick={() => {}}
+              small={true}
+              // secondary={true}
+            />
+          </div>
           <h3 className="flex-grow flex items-center justify-center font-semibold text-base tracking-wide">
             Log in or Sign up
           </h3>
@@ -109,6 +110,7 @@ const Signup = () => {
             Necessitatibus rem repudiandae sit
           </p>
           <Button
+            primary={true}
             disabled={isLoading}
             type={"submit"}
             icon={false}

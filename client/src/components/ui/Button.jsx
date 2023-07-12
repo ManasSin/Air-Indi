@@ -1,4 +1,4 @@
-import React from "react";
+import { twMerge } from "tailwind-merge";
 
 const Button = ({
   type = null,
@@ -8,30 +8,34 @@ const Button = ({
   outline = false,
   small = false,
   icon: Icon,
-  secondary = false,
+  secondary = null,
   className = null,
+  primary = null,
 }) => {
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`
+      className={twMerge(`
             relative
-            ${disabled ? "opacity-70 cursor-not-allowed" : ""}
             rounded-lg
             hover:opacity-80
             transition
             text-center
-            ${outline ? "bg-white" : "bg-rose-500"}
-            ${outline ? "border-black border" : "border-rose-500"}
-            ${secondary ? "border-none bg-white text-slate-600" : ""}
-            ${outline ? "text-black" : "text-white"}
-            ${small ? "py-1" : "py-2"}
-            ${small ? "font-thin text-xs" : "text-md font-semibold"}
-            ${small || outline ? "border" : "border-2 w-full"}
+            ${
+              outline
+                ? "bg-white border-black border text-black"
+                : secondary
+                ? "border-none bg-transparent text-black w-full"
+                : small
+                ? "font-thin text-xs py-1"
+                : primary
+                ? "bg-rose-500 border-red-500 text-white py-2 w-full text-md font-semibold"
+                : ""
+            }
             ${className}
-        `}
+            `)}
     >
       {Icon && <div>{Icon}</div>}
       {label}

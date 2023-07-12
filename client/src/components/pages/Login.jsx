@@ -48,13 +48,15 @@ const Login = () => {
     <main className="sm:px-5 lg:px-12 px-5 flex items-center justify-center flex-grow">
       <article className="grid grid-rows-[minmax(min-content,auto)] grid-col-1 max-w-md w-full -translate-y-1/4 max-h-fit border rounded-xl">
         <header className="flex items-center justify-center border-b px-3 py-4 h-fit">
-          <Button
-            outline={true}
-            icon={closeIcon}
-            onClick={() => {}}
-            small={true}
-            secondary={true}
-          />
+          <div className="w-7">
+            <Button
+              // outline={true}
+              icon={closeIcon}
+              onClick={() => {}}
+              small={true}
+              // secondary={true}
+            />
+          </div>
           <h3 className="flex-grow flex items-center justify-center font-semibold text-base tracking-wide">
             Log in or Sign up
           </h3>
@@ -96,6 +98,7 @@ const Login = () => {
           </p>
           <Button
             disabled={isloading}
+            primary={true}
             type={"submit"}
             icon={false}
             label={"Continue"}

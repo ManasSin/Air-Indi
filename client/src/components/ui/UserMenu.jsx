@@ -149,20 +149,20 @@ const UserMenu = () => {
                 <MenuItem
                   setIsOpen={setIsOpen}
                   text={"account"}
-                  className={"font-extralight tracking-wider text-sm"}
+                  className={"font-extralight tracking-wider text-xs"}
                 />
                 <MenuItem
                   setIsOpen={setIsOpen}
                   text={"airbnb your home"}
                   to={"host/home"}
-                  className={"font-extralight tracking-wider text-sm"}
+                  className={"font-extralight tracking-wider text-xs"}
                 />
               </div>
               <div className="py-2 border-b">
                 <MenuItem
                   setIsOpen={setIsOpen}
                   text={"Help"}
-                  className="font-extralight tracking-wider text-sm"
+                  className={"font-extralight tracking-wider text-xs"}
                 />
               </div>
               <div className="py-2 border-b">
@@ -170,7 +170,7 @@ const UserMenu = () => {
                   label={"Log out"}
                   onClick={LogoutUser}
                   secondary={true}
-                  className="text-xs underline"
+                  className={"text-xs underline"}
                 />
               </div>
             </>
