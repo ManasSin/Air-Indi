@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../Hooks/userAuth";
-import { Button } from "../ui";
-import InfoCard from "../ui/InfoCard";
+import { Button, InfoCard } from "../ui";
 
 const UserAccount = () => {
   const { user } = useAuthContext();
@@ -9,7 +8,6 @@ const UserAccount = () => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 32 32"
-      ariaHidden="true"
       role="presentation"
       focusable="false"
       style={{
@@ -25,14 +23,14 @@ const UserAccount = () => {
   return (
     <section
       aria-label="Account details page"
-      className="sm:px-5 lg:px-12 px-5 mx-auto my-10 max-w-screen-lg tablet:max-w-screen-lg w-full"
+      className="sm:px-5 lg:px-12 px-5 mx-auto my-10 lg:max-w-screen-lg tablet:max-w-screen-md max-w-screen-sm   w-full"
     >
       <header className="flex flex-col gap-1 py-5 px-3">
         <h1 className="font-bold text-2xl tracking-wider">Account</h1>
         <div className="flex justify-start items-center">
           <p aria-label="account holder name" className="font-medium text-base">
-            {user.user.name},{" "}
-            <span className="font-light pr-2">{user.user.email} . </span>
+            {user?.name},{" "}
+            <span className="font-light pr-2">{user?.email} . </span>
           </p>
           <Link to={"/user/profile"}>
             <Button
@@ -46,20 +44,20 @@ const UserAccount = () => {
 
       <main className="flex flex-wrap gap-6 justify-start items-start my-5 text-slate-800 tracking-wide">
         <InfoCard
-          to={"/personal-info"}
+          to={"/account/personal-info"}
           icon={InfoIcon}
           title={"Personal Info"}
           bodytext={"Provide personal details and how we can reach you"}
         />
         <InfoCard
-          to={"/login secrity"}
+          to={"/account/login-security"}
           icon={InfoIcon}
-          title={"Login % security"}
+          title={"Login & security"}
           bodytext={"Update your password and secure your account"}
         />
 
         <InfoCard
-          to={"/payments"}
+          to={"/account/payments"}
           icon={InfoIcon}
           title={"Payments & payouts"}
           bodytext={"Review payments, payouts, coupons and gift cards"}

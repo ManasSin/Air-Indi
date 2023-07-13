@@ -1,4 +1,9 @@
-export { default as Layout } from "./Layout";
+export { default as Layout } from "../Routes/Layout";
 export { default as Login } from "./Login";
 export { default as Signup } from "./Signup";
 export { default as IndexPage } from "./IndexPage";
+export { default as UserAccount } from "./UserAccount";
+export { default as PersonalInfo } from "./PersonalInfo";
+export { default as PaymentsPayment } from "./PaymentsPayment";
+export { default as LoginAndSecurity } from "./LoginAndSecurity";
+export { default as Profile } from "./Profile";
