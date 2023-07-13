@@ -13,10 +13,10 @@ const InfoCard = ({
       to={to}
       aria-label={title}
       className={twMerge(
-        `flex flex-col w-72 shrink-0 grow p-3 rounded-lg shadow-lg ${className}`
+        `flex flex-col w-72 shrink-0 grow sm:grow p-3 rounded-lg shadow-[rgba(0,_0,_0,_0.2)_0px_5px_20px] ${className}`
       )}
     >
-      <article>
+      <article className="z-10 relative">
         <div
           aria-label="label-icon"
           className="w-full flex justify-start items-start mb-5"

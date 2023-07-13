@@ -110,7 +110,7 @@ const UserMenu = () => {
           <div className="flex items-center justify-center">
             <div className="h-9 mr-2 p-1">{menuBar}</div>
             <p className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
-              {user.user.name.charAt(0)}
+              {user?.name.charAt(0)}
             </p>
           </div>
         ) : (
@@ -132,7 +132,7 @@ const UserMenu = () => {
                 w-[170px]
                 md:w-[180px]
                 bg-white
-                drop-shadow-md
+                shadow-[rgba(0,_0,_0,_0.2)_0px_5px_20px]
             "
         >
           {user ? (
