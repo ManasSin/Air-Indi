@@ -1,15 +1,19 @@
-import { Route, Routes, Navigate } from "react-router-dom";
-import { IndexPage, Layout, Login, Signup } from "./components/pages";
+import { Route, Routes, Navigate, Outlet } from "react-router-dom";
+import {
+  IndexPage,
+  Login,
+  PaymentsPayment,
+  PersonalInfo,
+  LoginAndSecurity,
+  Signup,
+  UserAccount,
+  Profile,
+} from "./components/pages";
 import { useAuthContext } from "./components/Hooks";
-import { useEffect } from "react";
-import axios from "axios";
-import UserAccount from "./components/pages/UserAccount";
+import IsProtected from "./components/Routes/IsProctected";
+import Layout from "./components/Routes/Layout";
 
 function App() {
-  useEffect(() => {
-    axios.get("/api/user/profile");
-  }, []);
-
   const { user } = useAuthContext();
   return (
     <>
@@ -26,13 +30,18 @@ function App() {
             element={user ? <Navigate to={"/"} /> : <Signup />}
           />
           <Route
-            path="/account"
-            element={!user ? <Navigate to={"/login"} /> : <UserAccount />}
+            path="/user/profile"
+            element={!user ? <Navigate to={"/"} /> : <Profile />}
           />
+          <Route path="account" element={<IsProtected userIn={user} />}>
+            <Route index element={<UserAccount />} />
+            <Route path="personal-info" element={<PersonalInfo />} />
+            <Route path="login-security" element={<LoginAndSecurity />} />
+            <Route path="payments" element={<PaymentsPayment />} />
+          </Route>
         </Route>
       </Routes>
     </>
   );
 }
-
 export default App;
