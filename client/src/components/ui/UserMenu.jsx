@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
 import MenuItem from "./MenuItem";
 import { Link } from "react-router-dom";
-import { useAuthContext, useLogout } from "../Hooks";
+import { useLogout } from "../Hooks";
 import Button from "./Button";
+import { twMerge } from "tailwind-merge";
 
-const UserMenu = () => {
-  const { user } = useAuthContext();
+const UserMenu = ({ user }) => {
   const { logout } = useLogout();
 
   const logoGlobe = (
@@ -97,20 +97,19 @@ const UserMenu = () => {
         aria-label="open menu"
         aria-checked={isOpen}
         onClick={toggleUserMenu}
-        className="
+        className={twMerge(`
             flex-grow-0
             max-w-fit
             px-3 
             py-1 
             h-10 
-            hover:shadow-md hover:cursor-pointer rounded-full border-2 flex items-center justify-center gap-3 ml-2  shadow-sm cursor-pointer
-          "
+            hover:shadow-md hover:cursor-pointer rounded-full border-2 flex items-center justify-center gap-3 ml-2  shadow-sm cursor-pointer`)}
       >
         {user ? (
           <div className="flex items-center justify-center">
             <div className="h-9 mr-2 p-1">{menuBar}</div>
             <p className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
-              {user?.name.charAt(0)}
+              {user ? user.name : { logoUser }}
             </p>
           </div>
         ) : (

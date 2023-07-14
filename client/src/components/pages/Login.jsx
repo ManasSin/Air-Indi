@@ -100,7 +100,6 @@ const Login = () => {
             disabled={isloading}
             primary={true}
             type={"submit"}
-            icon={false}
             label={"Continue"}
           />
         </form>

@@ -1,22 +1,13 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 import { Button } from "../ui";
 
-const Profile = () => {
-  const [profileData, setProfileData] = useState(null);
-
-  useEffect(() => {
-    const getData = async () => {
-      const {
-        data: { user },
-      } = await axios.get("/api/user/profile");
-      setProfileData(user);
-    };
-    getData();
-  }, []);
-
+const Profile = ({ user: profileData }) => {
   return (
-    <section className="grid grid-cols-[minmax(min-content,1fr)_1fr_1fr] max-w-screen-sm tablet:max-w-screen-md lg:max-w-screen-lg w-full mx-auto my-10 h-full">
+    <section
+      className={twMerge(
+        `flex flex-col justify-center items-center gap-5 sm:grid sm:grid-cols-[minmax(min-content,1fr)_1fr_1fr] sm:max-w-screen-sm lg:max-w-screen-md w-full mx-auto my-10 h-full`
+      )}
+    >
       <aside
         className="max-w-[18rem] flex flex-col gap-7"
         style={{ gridColumn: "span 1 / 2" }}
@@ -76,7 +67,7 @@ const Profile = () => {
         className="flex items-center justify-center"
         style={{ gridColumn: "span 2 / -1" }}
       >
-        <div className="max-w-[15rem] h-max border-t flex flex-col gap-4 m-auto">
+        <div className="max-w-[15rem] h-max border-t flex flex-col gap-4 m-auto py-5 px-2">
           <h4 className="text-base font-medium">
             It's time to create your profile
           </h4>

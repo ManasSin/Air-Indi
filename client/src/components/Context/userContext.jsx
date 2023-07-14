@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer } from "react";
 
-export const userContext = createContext();
+export const UserContext = createContext();
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -19,16 +19,17 @@ export const UserContextProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const { user } = JSON.parse(localStorage.getItem("User"));
+    const data = JSON.parse(localStorage.getItem("User"));
 
-    if (user) {
+    if (data) {
+      const { user } = data;
       dispatch({ type: "LOGIN", payload: user });
     }
   }, []);
 
   return (
-    <userContext.Provider value={{ ...state, dispatch }}>
+    <UserContext.Provider value={{ ...state, dispatch }}>
       {children}
-    </userContext.Provider>
+    </UserContext.Provider>
   );
 };

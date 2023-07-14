@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate, Outlet } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import {
   IndexPage,
   Login,
@@ -31,7 +31,7 @@ function App() {
           />
           <Route
             path="/user/profile"
-            element={!user ? <Navigate to={"/"} /> : <Profile />}
+            element={!user ? <Navigate to={"/"} /> : <Profile user={user} />}
           />
           <Route path="account" element={<IsProtected userIn={user} />}>
             <Route index element={<UserAccount />} />

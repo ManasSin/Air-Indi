@@ -11,17 +11,17 @@ export const useLogin = () => {
 
   const login = async (credentials) => {
     setIsLoading(true);
-    const { data } = await axios.post("/api/user/login", credentials);
+    try {
+      const { data } = await axios.post("/api/user/login", credentials);
 
-    if (data) {
-      localStorage.setItem("User", JSON.stringify(data));
-      dispatch({ type: "LOGIN", payload: data });
-      setError(null);
-      setIsLoading(false);
-      setUserin(true);
-    }
-
-    if (!data) {
+      if (data) {
+        localStorage.setItem("User", JSON.stringify(data));
+        dispatch({ type: "LOGIN", payload: data });
+        setError(null);
+        setIsLoading(false);
+        setUserin(true);
+      }
+    } catch (error) {
       setIsLoading(false);
       setError(data.error);
     }

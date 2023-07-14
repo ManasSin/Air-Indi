@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 const Button = ({
   type = null,
   label = String,
-  onClick = null,
+  onClick = () => {},
   disabled = false,
   outline = false,
   small = false,

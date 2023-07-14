@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Search, UserMenu } from "../ui";
-import { useState } from "react";
+import { useAuthContext } from "../Hooks";
 
 const Header = () => {
+  const { user } = useAuthContext();
   const logoSvg = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +59,7 @@ const Header = () => {
           {logoSvgSmall}
         </Link>
         <Search />
-        <UserMenu />
+        <UserMenu user={user} />
       </main>
     </nav>
   );
