@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MenuItem from "./MenuItem";
 import { Link } from "react-router-dom";
 import { useLogout } from "../Hooks";
@@ -7,6 +7,24 @@ import { twMerge } from "tailwind-merge";
 
 const UserMenu = ({ user }) => {
   const { logout } = useLogout();
+
+  const ref = useRef();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const checkIfClickOutside = (e) => {
+      if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
+        // console.log("working");
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", checkIfClickOutside);
+
+    return () => {
+      document.addEventListener("mousedown", checkIfClickOutside);
+    };
+  }, [isMenuOpen]);
 
   const logoGlobe = (
     <svg
@@ -58,14 +76,13 @@ const UserMenu = ({ user }) => {
     </svg>
   );
 
-  const [isOpen, setIsOpen] = useState(false);
-
   const toggleUserMenu = useCallback(() => {
-    setIsOpen((value) => !value);
+    setIsMenuOpen((value) => !value);
   });
 
   const LogoutUser = () => {
     logout();
+    setIsMenuOpen(false);
   };
 
   return (
@@ -95,7 +112,7 @@ const UserMenu = ({ user }) => {
       </Link>
       <Link
         aria-label="open menu"
-        aria-checked={isOpen}
+        aria-checked={isMenuOpen}
         onClick={toggleUserMenu}
         className={twMerge(`
             flex-grow-0
@@ -108,9 +125,9 @@ const UserMenu = ({ user }) => {
         {user ? (
           <div className="flex items-center justify-center">
             <div className="h-9 mr-2 p-1">{menuBar}</div>
-            <p className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
-              {user ? user.name : { logoUser }}
-            </p>
+            <div className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
+              {user ? user.name : <div>{logoUser}</div>}
+            </div>
           </div>
         ) : (
           <>
@@ -119,8 +136,9 @@ const UserMenu = ({ user }) => {
           </>
         )}
       </Link>
-      {isOpen && (
+      {isMenuOpen && (
         <div
+          ref={ref}
           className="
                 absolute
                 z-10
@@ -137,21 +155,21 @@ const UserMenu = ({ user }) => {
           {user ? (
             <>
               <div className="py-2 border-b">
-                <MenuItem setIsOpen={setIsOpen} text={"Trips"} />
+                <MenuItem setIsOpen={setIsMenuOpen} text={"Trips"} />
                 <MenuItem
-                  setIsOpen={setIsOpen}
+                  setIsOpen={setIsMenuOpen}
                   text={"messages"}
                   to={"guest/inbox"}
                 />
               </div>
               <div className="py-2 border-b">
                 <MenuItem
-                  setIsOpen={setIsOpen}
+                  setIsOpen={setIsMenuOpen}
                   text={"account"}
                   className={"font-extralight tracking-wider text-xs"}
                 />
                 <MenuItem
-                  setIsOpen={setIsOpen}
+                  setIsOpen={setIsMenuOpen}
                   text={"airbnb your home"}
                   to={"host/home"}
                   className={"font-extralight tracking-wider text-xs"}
@@ -159,7 +177,7 @@ const UserMenu = ({ user }) => {
               </div>
               <div className="py-2 border-b">
                 <MenuItem
-                  setIsOpen={setIsOpen}
+                  setIsOpen={setIsMenuOpen}
                   text={"Help"}
                   className={"font-extralight tracking-wider text-xs"}
                 />
@@ -175,8 +193,8 @@ const UserMenu = ({ user }) => {
             </>
           ) : (
             <>
-              <MenuItem setIsOpen={setIsOpen} text={"Login"} />
-              <MenuItem setIsOpen={setIsOpen} text={"Signup"} />
+              <MenuItem setIsOpen={setIsMenuOpen} text={"Login"} />
+              <MenuItem setIsOpen={setIsMenuOpen} text={"Signup"} />
             </>
           )}
         </div>

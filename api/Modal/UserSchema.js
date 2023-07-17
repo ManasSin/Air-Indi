@@ -23,13 +23,19 @@ const UserSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
-      required: false,
-      // unique: true,
     },
     role: {
       type: String,
       enum: Object.values(AuthRoles),
       default: AuthRoles.USER,
+    },
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "UserAddress",
+      required: [true, "Address is required"],
+    },
+    emergencyContact: {
+      type: Number,
     },
   },
   { timestamps: true }

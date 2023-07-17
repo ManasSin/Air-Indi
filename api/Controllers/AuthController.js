@@ -25,7 +25,7 @@ export const singUp = asyncHandler(async (req, res) => {
   if (!password) throw new CustomError("password is required", 400);
 
   //check if the user already exists
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
 
   if (existingUser) {
     res.status(400).send("User already exists");
@@ -65,7 +65,21 @@ export const Login = asyncHandler(async (req, res) => {
   const token = generateJWT(user._id, user.role);
   res.cookie("token", token, cokiesOptions);
 
-  res.send({ user, token });
+  return res.send({ user, token });
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { id } = req.prams;
+  const data = req.body;
+
+  const updatedUser = await User.findByIdAndUpdate({ id }, data, {
+    new: true,
+  });
+
+  return res.send({
+    success: true,
+    user: updatedUser,
+  });
 });
 
 export const getProfile = asyncHandler(async (req, res) => {
@@ -75,6 +89,12 @@ export const getProfile = asyncHandler(async (req, res) => {
       expiresIn: "7d",
     });
     const user = await User.findById({ _id });
-    res.send({ user });
+
+    return res.send({ user });
   }
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  res.clearCookie("token");
+  return res.send("logged out");
 });

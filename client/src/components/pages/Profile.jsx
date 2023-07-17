@@ -5,7 +5,7 @@ const Profile = ({ user: profileData }) => {
   return (
     <section
       className={twMerge(
-        `flex flex-col justify-center items-center gap-5 sm:grid sm:grid-cols-[minmax(min-content,1fr)_1fr_1fr] sm:max-w-screen-sm lg:max-w-screen-md w-full mx-auto my-10 h-full`
+        `flex flex-col justify-center items-center gap-5 sm:grid sm:grid-cols-[minmax(min-content,1fr)_1fr_1fr] sm:max-w-screen-sm lg:max-w-screen-md w-full mx-auto my-10 h-full sm:px-5`
       )}
     >
       <aside
