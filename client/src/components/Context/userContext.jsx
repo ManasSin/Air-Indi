@@ -8,6 +8,8 @@ const userReducer = (state, action) => {
       return { user: action.payload };
     case "LOGOUT":
       return { user: null };
+    case "UPDATE_USER_DATA":
+      return { user: action.payload };
     default:
       return state;
   }

@@ -29,7 +29,7 @@ const Button = ({
                 : secondary
                 ? "border-none bg-transparent text-black w-full"
                 : small
-                ? "font-thin text-xs py-1"
+                ? "font-thin text-xs py-1 px-3"
                 : primary
                 ? "bg-rose-500 border-red-500 text-white py-2 w-full text-md font-semibold"
                 : ""

@@ -55,7 +55,10 @@ export const Login = asyncHandler(async (req, res) => {
     (await User.findOne({ email }).select("+password")) ||
     (await User.findOne({ phone }));
 
-  if (!user) res.status(422).send("Credentials not valid");
+  if (!user)
+    res
+      .status(422)
+      .send("User does not exist, please provide right crendentials");
 
   const passMatches = bcrypt.compare(password, user.password);
   // todo : perform actuall bcrypt check
@@ -69,17 +72,22 @@ export const Login = asyncHandler(async (req, res) => {
 });
 
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { id } = req.prams;
+  const { id } = req.params;
   const data = req.body;
 
-  const updatedUser = await User.findByIdAndUpdate({ id }, data, {
+  const updatedUser = await User.findByIdAndUpdate({ _id: id }, data, {
     new: true,
   });
+  const token = generateJWT(user._id, user.role);
+  res.cookie("token", token, cokiesOptions);
 
-  return res.send({
-    success: true,
-    user: updatedUser,
-  });
+  setTimeout(() => {
+    return res.send({
+      success: true,
+      user: updatedUser,
+      token,
+    });
+  }, 2000);
 });
 
 export const getProfile = asyncHandler(async (req, res) => {

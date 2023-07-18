@@ -5,6 +5,7 @@ const InputField = ({
   onChange,
   state,
   placeholder,
+  focus = false,
 }) => {
   return (
     <>
@@ -20,6 +21,7 @@ const InputField = ({
         onChange={onChange}
         name={name}
         autoComplete={"off"}
+        autoFocus={focus}
       />
     </>
   );

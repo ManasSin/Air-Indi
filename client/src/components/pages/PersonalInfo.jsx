@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Breadcrumbs } from "../ui";
 import { useAuthContext } from "../Hooks";
-import DetailsList from "../ui/DetailsList";
+import { EditFrom } from "../templates";
 
 const PersonalInfo = () => {
   const { user } = useAuthContext();
@@ -16,18 +16,40 @@ const PersonalInfo = () => {
       </header>
 
       <main className="sm:px-3 px-5">
-        <DetailsList title={"Legal name"} info={user.name} />
-        <DetailsList title={"Email address"} info={user.email} />
-        <DetailsList
+        <EditFrom
+          inputType={"text"}
+          title={"Legal name"}
+          data={"name"}
+          info={user.name}
+        />
+        <EditFrom
+          inputType={"email"}
+          title={"Email address"}
+          data={"email"}
+          info={user.email}
+        />
+        <EditFrom
+          inputType={"tel"}
           title={"Phone Numbers"}
+          data={"phone"}
           info={
             user.phone
               ? user.phone
               : `Add a number confirmed guests and Airbnb can get in touch. You can add other numbers and choose how they’re used.`
           }
         />
-        <DetailsList title={"Address"} info={user.address} />
-        <DetailsList title={"Emergency Contact"} info={user.emergencyNum} />
+        <EditFrom
+          inputType={"text"}
+          title={"Address"}
+          data={"address"}
+          info={user.address}
+        />
+        <EditFrom
+          inputType={"tel"}
+          data={"emergencyContact"}
+          title={"Emergency Contact"}
+          info={user.emergencyNum}
+        />
       </main>
     </section>
   );

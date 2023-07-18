@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
+      default: null,
     },
     role: {
       type: String,
@@ -32,10 +33,10 @@ const UserSchema = new mongoose.Schema(
     address: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserAddress",
-      required: [true, "Address is required"],
     },
     emergencyContact: {
       type: Number,
+      default: null,
     },
   },
   { timestamps: true }
