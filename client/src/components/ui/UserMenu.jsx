@@ -126,7 +126,7 @@ const UserMenu = ({ user }) => {
           <div className="flex items-center justify-center">
             <div className="h-9 mr-2 p-1">{menuBar}</div>
             <div className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
-              {user ? user.name : <div>{logoUser}</div>}
+              {user ? user.name.charAt(0) : <div>{logoUser}</div>}
             </div>
           </div>
         ) : (

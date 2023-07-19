@@ -1,8 +1,7 @@
-import React, { useRef, useState } from "react";
+import { useState } from "react";
 import DetailsList from "../ui/DetailsList";
 import { Button, InputField } from "../ui";
-import { useAuthContext } from "../Hooks";
-import axios from "axios";
+import { userUpdate } from "../Hooks";
 
 const EditFrom = ({
   title = String || null,
@@ -10,13 +9,9 @@ const EditFrom = ({
   inputType = String || null,
   data: dataToChange = String,
 }) => {
-  const {
-    user: { _id: id },
-    dispatch,
-  } = useAuthContext();
+  const { updateUser, isLoading, error } = userUpdate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [credentials, setCredentials] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   const changeData = (e) => {
     setCredentials({ ...credentials, [dataToChange]: e.target.value });
@@ -39,14 +34,13 @@ const EditFrom = ({
   };
 
   const HandleUpdateForm = async (e) => {
-    setIsLoading(true);
+    updateUser(credentials);
     e.preventDefault();
-    const { data: updatedUser } = await axios.post(
-      `/api/user/update/${id}`,
-      credentials
-    );
-    dispatch({ type: "UPDATE_USER_DATA", payload: updatedUser });
   };
+
+  if (isLoading) {
+    return <div>Loading ...</div>;
+  }
 
   return (
     <div aria-busy={isModalOpen} className="flex flex-col gap-2 border-b">
@@ -75,7 +69,7 @@ const EditFrom = ({
           />
           <Button
             primary={true}
-            disabled={isLoading}
+            // disabled={isLoading}
             className={"bg-black text-white w-fit px-5"}
             label={"Save"}
           />

@@ -35,7 +35,7 @@ const Header = () => {
 
   const showModal = () => {};
   return (
-    <nav className="sm:px-5 lg:px-12 px-5 py-3 border-b-2">
+    <nav className="sm:px-5 lg:px-12 px-5 py-3 h-20 flex items-center border-b-2">
       <main
         className="grid 
         tablet:grid-cols-[1fr_minmax(max-content,1fr)_minmax(max-content,1fr)] 
