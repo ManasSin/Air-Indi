@@ -15,8 +15,9 @@ const generateJWT = (_id, role) => {
   });
 };
 
-const bcyrptSalt = bcrypt.genSaltSync(10);
+const bcryptSalt = bcrypt.genSaltSync(10);
 
+// ? register/ signup
 export const singUp = asyncHandler(async (req, res) => {
   const { name, email, password, phone = null } = req.body;
 
@@ -33,18 +34,19 @@ export const singUp = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     email,
-    password: bcrypt.hashSync(password, bcyrptSalt),
+    password: bcrypt.hashSync(password, bcryptSalt),
     phone,
   });
   const token = generateJWT(user._id, user.role);
 
   res.cookie("token", token, cokiesOptions);
   res.send({
-    success: true,
     token,
     user,
   });
 });
+
+// ? login
 
 export const Login = asyncHandler(async (req, res) => {
   const { email = null, password, phone = null } = req.body;
@@ -52,8 +54,8 @@ export const Login = asyncHandler(async (req, res) => {
   if (!password) res.status(400).send("required fields must be filled");
 
   const user =
-    (await User.findOne({ email }).select("+password")) ||
-    (await User.findOne({ phone }));
+    (await User.findOne({ email }).select("-password")) ||
+    (await User.findOne({ phone })).populate("address", "UserAddress");
 
   if (!user)
     res
@@ -71,11 +73,12 @@ export const Login = asyncHandler(async (req, res) => {
   return res.send({ user, token });
 });
 
+// ? update profile
 export const updateProfile = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
 
-  const updatedUser = await User.findByIdAndUpdate({ _id: id }, data, {
+  const user = await User.findByIdAndUpdate({ _id: id }, data, {
     new: true,
   });
   const token = generateJWT(user._id, user.role);
@@ -83,13 +86,13 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
   setTimeout(() => {
     return res.send({
-      success: true,
-      user: updatedUser,
+      user,
       token,
     });
   }, 2000);
 });
 
+// ? get profile
 export const getProfile = asyncHandler(async (req, res) => {
   const { token } = req.cookies;
   if (token) {
@@ -102,7 +105,10 @@ export const getProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// ? logout
 export const logout = asyncHandler(async (req, res) => {
-  res.clearCookie("token");
-  return res.send("logged out");
+  res.cookie("token", "", {
+    expires: new Date(0),
+  });
+  res.send("logged out");
 });

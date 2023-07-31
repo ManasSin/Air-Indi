@@ -21,7 +21,7 @@ app.use(errorHandler);
 
 // routes
 app.use("/api/user", AuthRoute);
-// app.use('/api/hotel', PostRoute);
+// app.use("/api/hotel", PostRoute);
 
 //connecting with mongo
 mongoose
