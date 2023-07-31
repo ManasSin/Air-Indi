@@ -1,10 +1,9 @@
-import React, { useState } from "react";
 import { Breadcrumbs } from "../ui";
 import { useAuthContext } from "../Hooks";
 import { EditFrom } from "../templates";
 
 const PersonalInfo = () => {
-  const { user } = useAuthContext();
+  const { user2: user } = useAuthContext();
   return (
     <section
       aria-label="Account details page"
@@ -20,21 +19,21 @@ const PersonalInfo = () => {
           inputType={"text"}
           title={"Legal name"}
           data={"name"}
-          info={user.name}
+          info={user?.name}
         />
         <EditFrom
           inputType={"email"}
           title={"Email address"}
           data={"email"}
-          info={user.email}
+          info={user?.email}
         />
         <EditFrom
           inputType={"tel"}
           title={"Phone Numbers"}
           data={"phone"}
           info={
-            user.phone
-              ? user.phone
+            user?.phone
+              ? user?.phone
               : `Add a number confirmed guests and Airbnb can get in touch. You can add other numbers and choose how they’re used.`
           }
         />
@@ -42,13 +41,13 @@ const PersonalInfo = () => {
           inputType={"text"}
           title={"Address"}
           data={"address"}
-          info={user.address}
+          info={user?.address}
         />
         <EditFrom
           inputType={"tel"}
           data={"emergencyContact"}
           title={"Emergency Contact"}
-          info={user.emergencyNum}
+          info={user?.emergencyNum}
         />
       </main>
     </section>

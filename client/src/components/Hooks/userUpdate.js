@@ -6,18 +6,18 @@ export const userUpdate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const {
-    user: { _id: id },
-    dispatch,
-  } = useAuthContext();
+  const { user2, dispatch } = useAuthContext();
 
   const updateUser = async (credentials) => {
     setIsLoading(true);
     try {
-      const { data } = await axios.post(`/api/user/update/${id}`, credentials);
+      const { data } = await axios.post(
+        `/api/user/update/${user2?._id}`,
+        credentials
+      );
       if (data) {
         localStorage.setItem("User", JSON.stringify(data));
-        dispatch({ type: "UPDATE", payload: data });
+        dispatch({ type: "UPDATE_USER_DATA", payload: data });
         setError(null);
         setIsLoading(false);
       }

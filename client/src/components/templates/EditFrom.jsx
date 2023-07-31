@@ -69,7 +69,6 @@ const EditFrom = ({
           />
           <Button
             primary={true}
-            // disabled={isLoading}
             className={"bg-black text-white w-fit px-5"}
             label={"Save"}
           />

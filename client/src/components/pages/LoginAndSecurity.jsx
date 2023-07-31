@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAuthContext } from "../Hooks";
 import { Breadcrumbs } from "../ui";
 import DetailsList from "../ui/DetailsList";
+import { EditFrom } from "../templates";
 
 const LoginAndSecurity = () => {
   useEffect(() => {
@@ -23,11 +24,28 @@ const LoginAndSecurity = () => {
       <main className="sm:px-3 px-5 my-6 border-t">
         <div className="flex flex-col gap-6">
           <h2 className="my-6 font-semibold text-lg ">Login</h2>
-          <DetailsList title={"Legal name"} info={user.name} />
+          {/* <DetailsList title={"Legal name"} info={user.name} /> */}
+          <EditFrom
+            inputType={"text"}
+            title={"Legal name"}
+            data={"name"}
+            info={user.name}
+          />
+          <EditFrom
+            inputType={"email"}
+            title={"Email address"}
+            data={"email"}
+            info={user.email}
+          />
         </div>
         <div className="flex flex-col gap-6">
           <h2 className="my-6 font-semibold text-lg ">Device History</h2>
-          <DetailsList title={"Legal name"} info={user.name} />
+          <EditFrom
+            inputType={"email"}
+            title={"Email address"}
+            data={"email"}
+            info={user.email}
+          />
           {/* //todo : get user device info from a api cal.*/}
         </div>
       </main>

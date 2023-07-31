@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const IsProtected = ({ userIn, children = null }) => {
-  if (userIn === null) {
-    return <Navigate to={"/"} />;
+const IsProtected = ({ user, children = null }) => {
+  if (user === null) {
+    <Navigate to={"/"} />;
   }
   return children ? children : <Outlet />;
 };

@@ -27,27 +27,25 @@ const Breadcrumbs = () => {
 
   let locationVisited = "";
 
-  const crumbs = location.pathname
-    .split("/")
-    .filter((crumbs) => crumbs !== "")
-    .map((crumbs) => {
-      locationVisited = `/${crumbs}`;
+  const crumbs = location.pathname.split("/").filter((crumbs) => crumbs !== "");
 
-      return (
-        <div
-          key={crumbs}
-          className="flex gap-4 items-center justify-start w-fit"
-        >
-          <Link to={locationVisited} className="font-medium text-sm">
-            {crumbs.charAt(0).toUpperCase()}
-            {crumbs.slice(1)}
-          </Link>
-          <div>{chevronLeft}</div>
-        </div>
-      );
-    });
+  const crumbsUi = crumbs.map((crumb, index) => {
+    locationVisited = `/${crumb}`;
 
-  return <div className="flex items-center justify-start gap-4">{crumbs}</div>;
+    return (
+      <div key={crumb} className="flex gap-4 items-center justify-start w-fit">
+        <Link to={locationVisited} className="font-medium text-sm">
+          {crumb.charAt(0).toUpperCase()}
+          {crumb.slice(1)}
+        </Link>
+        {crumbs.length - 1 !== index && <div>{chevronLeft}</div>}
+      </div>
+    );
+  });
+
+  return (
+    <div className="flex items-center justify-start gap-4">{crumbsUi}</div>
+  );
 };
 
 export default Breadcrumbs;

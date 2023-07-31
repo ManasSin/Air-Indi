@@ -18,7 +18,11 @@ const PaymentsPayment = () => {
 
       <main className="sm:px-3 px-5 my-6 ">
         <div className="max-w-[200px] mx-auto my-10">
-          <Button label={"Link to Stripe"} primary={true} onClick={() => {}} />
+          <Button
+            label={"Link to RajorPay"}
+            primary={true}
+            onClick={() => {}}
+          />
         </div>
       </main>
     </section>

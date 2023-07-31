@@ -1,7 +1,7 @@
 import { twMerge } from "tailwind-merge";
 
 const Button = ({
-  type = null,
+  type = String,
   label = String,
   onClick = () => {},
   disabled = false,
@@ -11,12 +11,13 @@ const Button = ({
   secondary = null,
   className = null,
   primary = null,
+  isloading = false,
 }) => {
   return (
     <button
-      type={type}
+      type={`${type}`}
       onClick={onClick}
-      disabled={disabled}
+      // disabled={disabled}
       className={twMerge(`
             relative
             rounded-lg
@@ -25,7 +26,7 @@ const Button = ({
             text-center
             ${
               outline
-                ? "bg-white border-black border text-black"
+                ? "bg-white border-black border text-black py-1.5"
                 : secondary
                 ? "border-none bg-transparent text-black w-full"
                 : small

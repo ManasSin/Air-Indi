@@ -17,14 +17,17 @@ const userReducer = (state, action) => {
 
 export const UserContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, {
-    user: null,
+    user: localStorage.getItem("userInfo")
+      ? JSON.parse(localStorage.getItem("userInfo"))
+      : null,
+    modalState: false,
   });
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("User"));
     // console.log(user);
 
-    if (user !== null) {
+    if (user && user.user) {
       const { user: userData } = user;
       dispatch({ type: "LOGIN", payload: userData });
     }
@@ -36,4 +39,3 @@ export const UserContextProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-``;

@@ -7,3 +7,4 @@ export { default as PersonalInfo } from "./PersonalInfo";
 export { default as PaymentsPayment } from "./PaymentsPayment";
 export { default as LoginAndSecurity } from "./LoginAndSecurity";
 export { default as Profile } from "./Profile";
+export { default as RegisterModal } from "./RegisterModal";
