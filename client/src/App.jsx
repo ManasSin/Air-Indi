@@ -8,16 +8,19 @@ import {
   Signup,
   UserAccount,
   Profile,
+  RegisterModal,
 } from "./components/pages";
 import { useAuthContext } from "./components/Hooks";
 import IsProtected from "./components/Routes/IsProctected";
 import Layout from "./components/Routes/Layout";
+import useRegisterModal from "./components/Hooks/useRegisterModal";
 
 function App() {
   const { user } = useAuthContext();
+  const registerModal = useRegisterModal();
   return (
     <>
-      {/* <Header /> */}
+      {registerModal.isOpen && <RegisterModal />}
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<IndexPage />} />
@@ -33,7 +36,7 @@ function App() {
             path="/user/profile"
             element={!user ? <Navigate to={"/"} /> : <Profile user={user} />}
           />
-          <Route path="account" element={<IsProtected userIn={user} />}>
+          <Route path="account" element={<IsProtected user={user} />}>
             <Route index element={<UserAccount />} />
             <Route path="personal-info" element={<PersonalInfo />} />
             <Route path="login-security" element={<LoginAndSecurity />} />
