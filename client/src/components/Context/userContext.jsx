@@ -17,28 +17,11 @@ const userReducer = (state, action) => {
 
 export const UserContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, {
-    user: localStorage.getItem("userInfo")
-      ? JSON.parse(localStorage.getItem("userInfo"))
+    user: localStorage.getItem("User")
+      ? JSON.parse(localStorage.getItem("User"))
       : null,
     modalState: false,
   });
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("User")) || null;
-    // console.log(user);
-
-    if (user === null) {
-      if (!user) return;
-    }
-
-    if (user && user.user) {
-      const { user: userData } = user;
-      console.log(userData);
-      setTimeout(() => {
-        dispatch({ type: "LOGIN", payload: userData });
-      }, 1000);
-    }
-  }, []);
 
   return (
     <UserContext.Provider value={{ ...state, dispatch }}>
