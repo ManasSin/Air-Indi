@@ -1,6 +1,6 @@
 import JWT from "jsonwebtoken";
-import { asyncHandler } from "../Service/asyncHandler";
-import CustomError from "../Utils/CustomError";
+import { asyncHandler } from "../Service/asyncHandler.js";
+import CustomError from "../Utils/CustomError.js";
 
 export const isLoggedIn = asyncHandler(async (req, res, next) => {
   let token;

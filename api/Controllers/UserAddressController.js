@@ -1,8 +1,8 @@
 // Assuming you have imported necessary modules and dependencies
 import express from "express";
 import { UserAddress } from "../Modal/UserAddressSchema";
-import { asyncHandler } from "../Service/asyncHandler";
-import CustomError from "../Utils/CustomError";
+import { asyncHandler } from "../Service/asyncHandler.js";
+import CustomError from "../Utils/CustomError.js";
 
 const router = express.Router();
 

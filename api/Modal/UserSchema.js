@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 import AuthRoles from "../Utils/AuthRoles.js";
 import jwt from "jsonwebtoken";
+import { salt } from "../Utils/Bycrpt-helper.js";
+import bcrypt from "bcrypt";
+
+// const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -45,8 +48,7 @@ const UserSchema = new mongoose.Schema(
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  const salt = bcrypt.genSaltSync(10);
-  this.password = bcrypt.hashSync(this.password, salt);
+  this.password = await bcrypt.hashSync(this.password, salt);
   next();
 });
 
