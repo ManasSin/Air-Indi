@@ -11,11 +11,13 @@ export const useSignup = () => {
   const signup = async (credentials) => {
     setIsLoading(true);
     try {
-      const { data } = await axios.post("/api/user/signup", credentials);
+      const {
+        data: { user, token },
+      } = await axios.post("/api/user/signup", credentials);
 
-      if (data) {
-        localStorage.setItem("User", JSON.stringify(data));
-        dispatch({ type: "LOGIN", payload: data });
+      if (user) {
+        localStorage.setItem("User", JSON.stringify(user));
+        dispatch({ type: "LOGIN", payload: user });
         setUserin(true);
         setIsLoading(false);
       }

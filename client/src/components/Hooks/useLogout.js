@@ -6,8 +6,8 @@ export const useLogout = () => {
   const [message, setMessage] = useState("");
   const { dispatch } = useAuthContext();
   const logout = async () => {
-    // const message = await axios.get("/api/user/logout");
-    // setMessage(message);
+    const message = await axios.post("/api/user/logout");
+    setMessage(message);
     localStorage.removeItem("User");
     dispatch({ type: "LOGOUT" });
   };

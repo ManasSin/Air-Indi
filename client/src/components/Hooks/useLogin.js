@@ -1,22 +1,35 @@
 import { useState } from "react";
 import { useAuthContext } from "./userAuth";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userin, setUserin] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(undefined);
+
+  // const navigate = useNavigate()
 
   const { dispatch } = useAuthContext();
 
   const login = async (credentials) => {
     setIsLoading(true);
     try {
-      const { data } = await axios.post("/api/user/login", credentials);
+      const { email, password, phone } = credentials;
+      if (password !== String && password.length < 5 && !email) {
+        return setError("Password must be at least 6 characters long");
+      }
+      const {
+        data: { user, token },
+      } = await axios.post("/api/user/login", {
+        email,
+        password,
+        phone,
+      });
 
-      if (data) {
-        localStorage.setItem("User", JSON.stringify(data));
-        dispatch({ type: "LOGIN", payload: data });
+      if (user && token) {
+        localStorage.setItem("User", JSON.stringify(user));
+        dispatch({ type: "LOGIN", payload: user });
         setError(null);
         setIsLoading(false);
         setUserin(true);
