@@ -24,12 +24,19 @@ export const UserContextProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("User"));
+    const user = JSON.parse(localStorage.getItem("User")) || null;
     // console.log(user);
+
+    if (user === null) {
+      if (!user) return;
+    }
 
     if (user && user.user) {
       const { user: userData } = user;
-      dispatch({ type: "LOGIN", payload: userData });
+      console.log(userData);
+      setTimeout(() => {
+        dispatch({ type: "LOGIN", payload: userData });
+      }, 1000);
     }
   }, []);
 
