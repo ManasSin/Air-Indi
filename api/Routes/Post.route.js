@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { isLoggedIn } from "../Middlewares/isLoggedIn";
-import { createProduct } from "../Controllers/ProductController";
+import { createProduct } from "../Controllers/BookingController";
 
 export const router = Router();
 

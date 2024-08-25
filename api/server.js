@@ -13,6 +13,7 @@ dotenv.config();
 app.use(express.json());
 app.use(
   cors({
+    origin: "*", // This allows any origin to access the API. We recommend limiting this to your specific domain in production.
     origin: "http://localhost:5173",
   })
 );

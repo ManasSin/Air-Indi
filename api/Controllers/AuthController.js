@@ -4,7 +4,7 @@ import CustomError from "../Utils/CustomError.js";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../Service/asyncHandler.js";
 
-export const cokiesOptions = {
+export const cookiesOptions = {
   expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
   httpOnly: true,
 };
@@ -26,7 +26,7 @@ export const singUp = asyncHandler(async (req, res) => {
   if (!password) throw new CustomError("password is required", 400);
 
   //check if the user already exists
-  const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
+  const existingUser = await User.findOne({ email });
 
   if (existingUser) {
     res.status(400).send("User already exists");
@@ -39,7 +39,7 @@ export const singUp = asyncHandler(async (req, res) => {
   });
   const token = generateJWT(user._id, user.role);
 
-  res.cookie("token", token, cokiesOptions);
+  res.cookie("token", token, cookiesOptions);
   res.send({
     token,
     user,
@@ -49,26 +49,32 @@ export const singUp = asyncHandler(async (req, res) => {
 // ? login
 
 export const Login = asyncHandler(async (req, res) => {
-  const { email = null, password, phone = null } = req.body;
+  console.log(req.body);
+  const { email = null, password = String(password), phone = null } = req.body;
 
-  if (!password) res.status(400).send("required fields must be filled");
+  // if (!password) res.status(400).send("required fields must be filled");
+  if (typeof password !== "string") {
+    console.error("password is not correct type");
+    return res.status(400).send("Password type is wrong");
+  }
 
-  const user =
-    (await User.findOne({ email }).select("-password")) ||
-    (await User.findOne({ phone })).populate("address", "UserAddress");
+  const user = await User.findOne({ $or: [{ email }, { phone }] });
 
   if (!user)
     res
-      .status(422)
-      .send("User does not exist, please provide right crendentials");
+      .status(404)
+      .send("User does not exist, please provide right credentials");
 
-  const passMatches = bcrypt.compare(password, user.password);
-  // todo : perform actuall bcrypt check
+  const passMatches = bcrypt.compare(
+    password,
+    typeof user?.password === "string" ? user?.password : ""
+  );
+  // todo : perform actual bcrypt check
 
-  if (!passMatches) res.status(422).send("worng password");
+  if (!passMatches) res.status(401).send("wrong password");
 
   const token = generateJWT(user._id, user.role);
-  res.cookie("token", token, cokiesOptions);
+  res.cookie("token", token, cookiesOptions);
 
   return res.send({ user, token });
 });
@@ -77,19 +83,26 @@ export const Login = asyncHandler(async (req, res) => {
 export const updateProfile = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
+  console.log(id);
 
-  const user = await User.findByIdAndUpdate({ _id: id }, data, {
-    new: true,
-  });
-  const token = generateJWT(user._id, user.role);
-  res.cookie("token", token, cokiesOptions);
+  try {
+    if (!id) throw new CustomError("user id is required", 400);
 
-  setTimeout(() => {
-    return res.send({
+    const user = await User.findByIdAndUpdate({ _id: id }, data, {
+      new: true,
+    });
+    const token = generateJWT(user._id, user.role);
+    res.cookie("token", token, cookiesOptions);
+
+    // setTimeout(() => {
+    return res.status(200).send({
       user,
       token,
     });
-  }, 2000);
+    // }, 2000);
+  } catch (error) {
+    res.status(401).send(error);
+  }
 });
 
 // ? get profile
