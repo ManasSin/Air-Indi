@@ -3,7 +3,8 @@ import { useAuthContext } from "../Hooks";
 import { EditFrom } from "../templates";
 
 const PersonalInfo = () => {
-  const { user2: user } = useAuthContext();
+  const { user } = useAuthContext();
+  console.log(user);
   return (
     <section
       aria-label="Account details page"

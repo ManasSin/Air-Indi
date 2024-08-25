@@ -1,17 +1,21 @@
 import { useState } from "react";
 import DetailsList from "../ui/DetailsList";
 import { Button, InputField } from "../ui";
-import { userUpdate } from "../Hooks";
+import { useAuthContext, userUpdate } from "../Hooks";
+import { useRevalidator } from "react-router-dom";
 
 const EditFrom = ({
-  title = String || null,
+  title = String,
   info,
-  inputType = String || null,
+  inputType = String,
   data: dataToChange = String,
+  id,
 }) => {
-  const { updateUser, isLoading, error } = userUpdate();
+  const { updateUser, isLoading, error, setIsLoading } = userUpdate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [credentials, setCredentials] = useState({});
+
+  const { user } = useAuthContext();
 
   const changeData = (e) => {
     setCredentials({ ...credentials, [dataToChange]: e.target.value });
@@ -34,13 +38,12 @@ const EditFrom = ({
   };
 
   const HandleUpdateForm = async (e) => {
-    updateUser(credentials);
     e.preventDefault();
+    setIsLoading(true);
+    await updateUser(user._id, credentials);
+    setIsLoading(false);
   };
-
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
+  // if (updateUser) setIsLoading(false);
 
   return (
     <div aria-busy={isModalOpen} className="flex flex-col gap-2 border-b">
@@ -49,7 +52,7 @@ const EditFrom = ({
           onClick={ToggleEditModal}
           isOpen={isModalOpen}
           title={title}
-          info={info}
+          info={user[dataToChange]}
           label={isModalOpen ? "Cancel" : "Edit"}
         />
       </div>

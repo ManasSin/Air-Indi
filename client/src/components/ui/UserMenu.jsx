@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import MenuItem from "./MenuItem";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLogout } from "../Hooks";
 import Button from "./Button";
 import { twMerge } from "tailwind-merge";
-import { menuBar, logoGlobe, logoUser } from "../../utils/icons";
+import {
+  menuBar,
+  logoGlobe,
+  logoUser,
+  logoUserBackup,
+} from "../../utils/icons";
 import useRegisterModal from "../Hooks/useRegisterModal";
 
 const UserMenu = ({ user }) => {
+  const [userData, setUserData] = useState(null);
   const registerModal = useRegisterModal();
 
   const { logout } = useLogout();
+
+  const navigate = useNavigate();
 
   const ref = useRef();
 
@@ -29,6 +37,9 @@ const UserMenu = ({ user }) => {
     };
     document.addEventListener("mousedown", checkIfClickOutside);
 
+    if (!user) return;
+    setUserData(user);
+
     return () => {
       document.addEventListener("mousedown", checkIfClickOutside);
     };
@@ -37,6 +48,7 @@ const UserMenu = ({ user }) => {
   const LogoutUser = () => {
     logout();
     setIsMenuOpen(false);
+    navigate("/");
   };
 
   return (
@@ -76,11 +88,15 @@ const UserMenu = ({ user }) => {
             h-10 
             hover:shadow-md hover:cursor-pointer rounded-full border-2 flex items-center justify-center gap-3 ml-2  shadow-sm cursor-pointer`)}
       >
-        {user ? (
+        {userData ? (
           <div className="flex items-center justify-center">
             <div className="h-9 mr-2 p-1">{menuBar}</div>
             <div className="font-medium text-xs py-1 px-1.5 bg-slate-900 text-white rounded-full">
-              {user ? user?.name.charAt(0) : <div>{logoUser}</div>}
+              {user ? (
+                <div className="w-6 aspect-square">{logoUserBackup}</div>
+              ) : (
+                <div className="w-6 aspect-square">{logoUser}</div>
+              )}
             </div>
           </div>
         ) : (

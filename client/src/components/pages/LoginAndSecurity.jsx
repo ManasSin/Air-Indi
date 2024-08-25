@@ -11,6 +11,7 @@ const LoginAndSecurity = () => {
   }, []);
 
   const { user } = useAuthContext();
+  console.log(user);
   return (
     <section
       aria-label="Account details page"
@@ -30,12 +31,14 @@ const LoginAndSecurity = () => {
             title={"Legal name"}
             data={"name"}
             info={user.name}
+            id={user._id}
           />
           <EditFrom
             inputType={"email"}
             title={"Email address"}
             data={"email"}
             info={user.email}
+            id={user._id}
           />
         </div>
         <div className="flex flex-col gap-6">
@@ -45,6 +48,7 @@ const LoginAndSecurity = () => {
             title={"Email address"}
             data={"email"}
             info={user.email}
+            id={user._id}
           />
           {/* //todo : get user device info from a api cal.*/}
         </div>

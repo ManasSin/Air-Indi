@@ -79,11 +79,19 @@ const Login = () => {
               onChange={handleChange}
             />
           </div>
-          <p className="font-thin text-xs tracking-normal">
-            * Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Necessitatibus rem repudiandae sit
+          <p
+            className={`font-thin text-xs tracking-normal ${
+              error ? "text-rose-600" : "text-black dark:text-white"
+            }`}
+          >
+            {error ? `${error}` : "Happy to see you again"}
           </p>
-          <Button primary={true} type={"submit"} label={"Continue"} />
+          <Button
+            primary={true}
+            disabled={isloading}
+            type={"submit"}
+            label={"Continue"}
+          />
         </form>
         <div className="px-5 py-4 flex items-center justify-center border-t">
           <p className="text-sm font-semibold tracking-wide">

@@ -24,7 +24,7 @@ const Search = () => {
     >
       <button
         onClick={() => {
-          openInputModal;
+          // openInputModal;
         }}
         className="text-xs font-medium border-r-2 px-4 truncate shrink basis-auto hidden sm:block"
       >
@@ -32,7 +32,7 @@ const Search = () => {
       </button>
       <button
         onClick={() => {
-          openInputModal;
+          // openInputModal;
         }}
         className="text-xs font-medium border-r-2 px-4 truncate shrink basis-auto hidden sm:block"
       >
@@ -41,7 +41,7 @@ const Search = () => {
 
       <button
         onClick={() => {
-          openInputModal;
+          // openInputModal;
         }}
         className="text-xs font-light px-4 truncate shrink basis-auto hidden sm:block"
       >

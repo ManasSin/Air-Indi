@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node api/server.js",
     "server": "nodemon api/server.js",
-    "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "client": "pnpm --prefix client run dev",
+    "dev": "concurrently \"pnpm run server\" \"pnpm run client\""
   },
   "keywords": [],
   "author": "",
@@ -18,12 +18,14 @@
     "nodemon": "^3.0.1"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
-    "mongoose": "^7.4.1"
+    "mongoose": "^7.4.1",
+    "zustand": "^4.5.0"
   }
 }

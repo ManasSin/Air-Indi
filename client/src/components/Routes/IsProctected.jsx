@@ -1,9 +1,13 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const IsProtected = ({ user, children = null }) => {
-  if (user === null) {
-    <Navigate to={"/"} />;
-  }
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user === null) {
+      navigate("/");
+    }
+  });
   return children ? children : <Outlet />;
 };
 

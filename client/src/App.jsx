@@ -17,6 +17,7 @@ import useRegisterModal from "./components/Hooks/useRegisterModal";
 
 function App() {
   const { user } = useAuthContext();
+  console.log(user);
   const registerModal = useRegisterModal();
   return (
     <>

@@ -24,6 +24,7 @@ const RegisterModal = () => {
     setCredentials({ ...credentials, [name]: value });
   };
   const registerModal = useRegisterModal();
+  console.log(registerModal);
 
   const {
     register,
