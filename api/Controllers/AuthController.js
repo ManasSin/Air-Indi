@@ -3,20 +3,7 @@ import CustomError from "../Utils/CustomError.js";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../Service/asyncHandler.js";
 import bcrypt from "bcrypt";
-// const bcrypt = require("bcryptjs");
-
-export const cookiesOptions = {
-  expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-  httpOnly: true,
-};
-
-const generateJWT = (_id, role) => {
-  return jwt.sign({ _id, role }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-};
-
-const bcryptSalt = bcrypt.genSaltSync(10);
+import { cookiesOptions, generateJWT } from "../Utils/JWT-helper.js";
 
 // ? register/ signup
 export const singUp = asyncHandler(async (req, res) => {
@@ -83,28 +70,25 @@ export const Login = asyncHandler(async (req, res) => {
 
 // ? update profile
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const user = req.user;
   const data = req.body;
-  // console.log(id);
+  // console.log({ user: user, data: data });
 
-  try {
-    if (!id) throw new CustomError("user id is required", 400);
+  const updateUser = await User.findByIdAndUpdate(
+    { _id: user._id },
+    { $set: data },
+    { new: true }
+  );
 
-    const user = await User.findByIdAndUpdate({ _id: id }, data, {
-      new: true,
-    });
-    const token = generateJWT(user._id, user.role);
-    res.cookie("token", token, cookiesOptions);
+  if (!updateUser) return res.status(404).send("User not found");
 
-    // setTimeout(() => {
-    return res.status(200).send({
-      user,
-      token,
-    });
-    // }, 2000);
-  } catch (error) {
-    res.status(401).send(error);
-  }
+  const token = generateJWT(updateUser._id, updateUser.role);
+  res.cookie("token", token, cookiesOptions);
+
+  return res.status(200).send({
+    user: updateUser,
+    token,
+  });
 });
 
 // ? get profile

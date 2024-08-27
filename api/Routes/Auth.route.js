@@ -6,11 +6,12 @@ import {
   updateProfile,
   logout,
 } from "../Controllers/AuthController.js";
+import { isLoggedIn } from "../Middlewares/isLoggedIn.js";
 
 export const router = Router();
 
-router.post("/signup", singUp);
-router.post("/login", Login);
-router.get("/profile", getProfile);
-router.post("/logout", logout);
-router.post("/update/:id", updateProfile);
+router.route("/signup").post(singUp);
+router.route("/login").post(Login);
+router.route("/profile").get(getProfile);
+router.route("/logout").post(logout);
+router.route("/update/:id").post(isLoggedIn, updateProfile);
