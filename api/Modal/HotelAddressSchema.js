@@ -6,9 +6,9 @@ const HotelAddressSchema = new mongoose.Schema(
       type: String,
       required: [true, "localArea is required"],
     },
-    pincode: {
+    pinCode: {
       type: Number,
-      required: [true, "pincode is required"],
+      required: [true, "pinCode is required"],
     },
     city: {
       type: String,
@@ -22,13 +22,25 @@ const HotelAddressSchema = new mongoose.Schema(
       type: String,
       required: [true, "country is required"],
     },
-    user: {
+    createdByUser: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: false,
+      default: null,
     },
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hotel",
+      required: false,
+      default: null,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
