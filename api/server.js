@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { router as AuthRoute } from "./Routes/Auth.route.js";
-import { router as BookingRoute } from "./Routes/Booking.route.js";
+import { router as HotelsRoutes } from "./Routes/Hotel.route.js";
+import { router as HotelAddressRoute } from "./Routes/HotelAddress.route.js";
 import { errorHandler } from "./Middlewares/errorHandler.js";
 
 const app = express();
@@ -23,7 +24,8 @@ app.use(errorHandler);
 
 // routes
 app.use("/api/user", AuthRoute);
-app.use("/api/hotel", BookingRoute);
+app.use("/api/hotelAddress", HotelAddressRoute);
+app.use("/api/hotel", HotelsRoutes);
 
 //connecting with mongo
 mongoose
