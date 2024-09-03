@@ -14,7 +14,7 @@ export const singUp = asyncHandler(async (req, res) => {
   if (!password) throw new CustomError("password is required", 400);
 
   //check if the user already exists
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.find({ email });
 
   if (existingUser) {
     res.status(400).send("User already exists");
