@@ -1,17 +1,19 @@
 import { Router } from "express";
 import {
   createHotelAddress,
-  getAllHotels,
+  getAllHotelAddress,
   getHotelAddressByID,
-  updateAddress,
-  deleteAddress,
+  updateHotelAddress,
+  deleteHotelAddress,
 } from "../Controllers/HotelAddressController.js";
 import { isLoggedIn } from "../Middlewares/isLoggedIn.js";
 
 export const router = Router();
 
 router.route("/create").post(isLoggedIn, createHotelAddress);
-router.route("/").get(getAllHotels);
-router.route("/:id").get(isLoggedIn, getHotelAddressByID);
-router.route("/:id").put(isLoggedIn, updateAddress);
-router.route("/:id").delete(isLoggedIn, deleteAddress);
+router.route("/").get(getAllHotelAddress);
+router
+  .route("/:id")
+  // .get(isLoggedIn, getHotelAddressByID)
+  .put(isLoggedIn, updateHotelAddress)
+  .delete(isLoggedIn, deleteHotelAddress);

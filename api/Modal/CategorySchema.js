@@ -11,7 +11,7 @@ const CategorySchema = new mongoose.Schema(
     },
     isDeleted: {
       type: Boolean,
-      default: false,
+      default: null,
     },
     image: {
       type: String,

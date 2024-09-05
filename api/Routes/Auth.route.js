@@ -12,6 +12,6 @@ export const router = Router();
 
 router.route("/signup").post(singUp);
 router.route("/login").post(Login);
-router.route("/profile").get(getProfile);
+router.route("/profile").get(isLoggedIn, getProfile);
 router.route("/logout").post(logout);
 router.route("/update/:id").post(isLoggedIn, updateProfile);
