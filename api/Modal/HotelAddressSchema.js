@@ -22,6 +22,14 @@ const HotelAddressSchema = new mongoose.Schema(
       type: String,
       required: [true, "country is required"],
     },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+    slugName: {
+      type: String,
+      unique: true,
+    },
     createdByUser: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -30,7 +38,7 @@ const HotelAddressSchema = new mongoose.Schema(
     },
     hotel: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Hotel",
+      ref: "Hotels",
       required: false,
       default: null,
     },
