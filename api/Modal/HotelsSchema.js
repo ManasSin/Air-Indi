@@ -4,40 +4,88 @@ const HotelsSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      minLength: [6, "title must be at least 10 chars"],
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      minLength: [6, "title must be at least 6 chars"],
+      // required: [true, "title is required"],
     },
     location: {
-      type: { type: String },
-      coordinates: [],
-    }, // google map javascript api for latitute and longitude.
+      type: {
+        type: String,
+        enum: ["Point"],
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+        validate: {
+          validator: (v) => v.length === 2,
+          message: "location coordinates must have two values",
+        },
+      },
+    }, // google map javascript api for latitude and longitude.
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
+      required: false,
+      default: null,
     },
-    address: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "HotelAddress",
-    },
-    discription: {
+    // address: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "HotelAddress",
+    //   required: false,
+    // },
+    description: {
       type: String,
-      required: [true, "discription is required"],
-      minLength: [20, "discription must be at least 10 chars"],
+      required: [true, "description is required"],
+      minLength: [10, "description must be at least 10 chars"],
+    },
+    priceRange: {
+      type: String,
+      required: true,
+      enum: ["budget", "mid-range", "luxury", "ultra-luxury", "any"],
+    },
+    price: {
+      type: Number,
+      required: [true, "Price is required"],
+    },
+    amenities: {
+      type: [String],
+      required: true,
+    },
+    services: {
+      type: [String],
+      required: true,
+    },
+    tags: {
+      type: [String],
+      required: true,
     },
     images: [
       {
         secure_url: {
           type: String,
-          required: [true, "image url is required"],
+          required: false,
         },
       },
-    ], //review need to be added
-    reviews: {
+    ],
+    createdByUser: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Review",
+      ref: "User",
+      required: [true, "user is required"],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
+    slugName: {
+      type: String,
+      unique: true,
     },
   },
   { timestamps: true }
@@ -47,6 +95,7 @@ HotelsSchema.index({
   location: "2dsphere",
 });
 
-export default mongoose.model("Hotel", HotelsSchema);
+const Hotels = mongoose.model("Hotels", HotelsSchema);
+export default Hotels;
 
 //ck editor

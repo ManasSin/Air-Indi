@@ -30,6 +30,7 @@ app.use("/api/hotel", HotelsRoutes);
 //connecting with mongo
 mongoose
   .connect(process.env.MONGO_DB_CONNECT_URL)
+  .then(() => console.log("Database connected"))
   .then(
     // listen to port
     app.listen(process.env.PORT || 8080, () => {

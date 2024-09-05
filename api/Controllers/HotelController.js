@@ -137,13 +137,14 @@ export const getHotels = asyncHandler(async (req, res) => {
         error: `Hotels not found for these ids ${ids.join(", ")}.`,
       });
     return res.status(200).send({ status: "OK", hotels: hotels });
-  }
-  try {
-    const hotels = await Hotels.find();
-    res.status(200).send({ status: "OK", hotels: hotels });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ status: "Error", error: "Server error." });
+  } else {
+    try {
+      const hotels = await Hotels.find();
+      res.status(200).send({ status: "OK", hotels: hotels });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ status: "Error", error: "Server error." });
+    }
   }
 });
 
