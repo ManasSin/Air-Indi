@@ -2,62 +2,108 @@ import express from "express";
 import { asyncHandler } from "../Service/asyncHandler.js";
 import HotelAddress from "../Modal/HotelAddressSchema.js";
 import mongoose from "mongoose";
-import User from "../Modal/UserSchema.js";
+import Hotels from "../Modal/HotelsSchema.js";
 
 const router = express.Router();
 
 // Create a new hotel address
+
 export const createHotelAddress = asyncHandler(async (req, res) => {
   // console.log({ id: req.user._id });
-  const user =
-    req.user !== null || req.user !== undefined || !!req.user
-      ? req.user._id
-      : req.params.user;
-  const { hotel: hotelId } = req.params;
+  const user = req.user._id;
+  const hotelId = req.query.hotelId;
 
-  const userExists = await User.findById(new mongoose.Types.ObjectId(user));
+  const HotelExistsForUser = await Hotels.find({
+    _id: hotelId,
+    createdByUser: user,
+  });
   // console.log({ user: user }, { userExists: userExists });
 
-  if (!user || !userExists) return res.status(401).send("User not found");
+  if (!HotelExistsForUser) return res.status(401).send("Hotel not found");
 
-  // TODO: check if the hotel exists for the hotelId given in the params. to prevent creation of duplicate addresses for same hotel
-
-  // check for hotel in hotel table and then proceed
-  if (hotelId !== undefined || hotelId !== null) {
+  try {
     const { localArea, pinCode, city, state, country } = req.body;
 
-    if (!localArea || !pinCode || !city || !state || !country) {
-      return res.status(401).send("Please provide all fields");
-      // throw new CustomError("All fields are required");
+    if (
+      !localArea ||
+      typeof localArea !== "string" ||
+      localArea.trim().length < 1 ||
+      !pinCode ||
+      typeof pinCode !== "number" ||
+      pinCode < 1 ||
+      !city ||
+      typeof city !== "string" ||
+      city.trim().length < 1 ||
+      !state ||
+      typeof state !== "string" ||
+      state.trim().length < 1 ||
+      !country ||
+      typeof country !== "string" ||
+      country.trim().length < 1
+    ) {
+      return res
+        .status(401)
+        .send("The fields are not valid. Please check and try again.");
     }
+
+    const localAreaStr = localArea
+      .trim()
+      .replace(/[^\w ]+/g, "")
+      .replace(/ +/g, "-");
+    const locationStr = `${localAreaStr}-${pinCode}-${city
+      .split(" ")
+      .join("-")}`;
+    const slugName = `${hotelId?.slice(18) || ""}-${locationStr}`;
+
+    console.log(slugName);
+
     const address = new HotelAddress({
       localArea,
       pinCode,
       city,
       state,
       country,
-      createdByUser: new mongoose.Types.ObjectId(user),
-      // hotel: new mongoose.Types.ObjectId(hotelId),
+      slugName,
+      createdByUser: user,
+      hotel: hotelId,
     });
 
     const data = await address.save();
     // console.log(data);
 
     return res.status(201).send({ data: data });
-  } else {
-    return res.status(401).send("Provide select hotel id");
-    // throw new CustomError("hotel id given is not correct.");
+  } catch (e) {
+    console.error(e);
+    return res.status(401).send({ status: "Error", error: e.message });
   }
 });
 
 // Get all hotel addresses
-export const getAllHotels = asyncHandler(async (req, res) => {
-  try {
-    const addresses = await HotelAddress.find();
-    res.json(addresses);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error." });
+export const getAllHotelAddress = asyncHandler(async (req, res) => {
+  const id = req.query.id;
+  // console.log({ id: id });
+
+  if (id) {
+    try {
+      const addresses = await HotelAddress.find({ hotel: id }).populate(
+        "hotel"
+      );
+      res.status(200).json({ status: "OK", HotelAddress: addresses });
+    } catch (err) {
+      res.status(404).send({
+        status: "Error",
+        error: err.message,
+        message: "User not found",
+      });
+    }
+  } else {
+    try {
+      const addresses = await HotelAddress.find();
+      res.status(200).json({ status: "OK", addresses: addresses });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Server error." });
+    }
   }
 });
 
@@ -77,7 +123,7 @@ export const getHotelAddressByID = asyncHandler(async (req, res) => {
 });
 
 // Update a hotel address by ID
-export const updateAddress = asyncHandler(async (req, res) => {
+export const updateHotelAddress = asyncHandler(async (req, res) => {
   try {
     const { addressId } = req.params;
     const addressData = req.body;
@@ -97,7 +143,7 @@ export const updateAddress = asyncHandler(async (req, res) => {
 });
 
 // Delete a hotel address by ID
-export const deleteAddress = asyncHandler(async (req, res) => {
+export const deleteHotelAddress = asyncHandler(async (req, res) => {
   try {
     const { addressId } = req.params;
     const deletedAddress = await HotelAddressSchema.findByIdAndDelete(
