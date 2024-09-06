@@ -27,11 +27,11 @@ const HotelsSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
-    // address: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "HotelAddress",
-    //   required: false,
-    // },
+    address: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "HotelAddress",
+      required: false,
+    },
     description: {
       type: String,
       required: [true, "description is required"],

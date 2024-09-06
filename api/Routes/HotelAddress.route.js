@@ -13,7 +13,7 @@ export const router = Router();
 router.route("/create").post(isLoggedIn, createHotelAddress);
 router.route("/").get(getAllHotelAddress);
 router
-  .route("/:id")
+  .route("/")
   // .get(isLoggedIn, getHotelAddressByID)
   .put(isLoggedIn, updateHotelAddress)
   .delete(isLoggedIn, deleteHotelAddress);
