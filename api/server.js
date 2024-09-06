@@ -22,6 +22,14 @@ app.use(
 app.use(cookieParser());
 app.use(errorHandler);
 
+// log routes hits
+app.use((req, res, next) => {
+  console.log(`Path: ${req.path}, Method: ${req.method}`);
+  console.log(`Query: ${JSON.stringify(req.query)}`);
+  console.log(`Body: ${JSON.stringify(req.body)}`);
+  next();
+});
+
 // routes
 app.use("/api/user", AuthRoute);
 app.use("/api/hotelAddress", HotelAddressRoute);
