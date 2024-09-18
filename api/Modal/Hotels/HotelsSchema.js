@@ -2,10 +2,35 @@ import mongoose from "mongoose";
 
 const HotelsSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      minLength: [6, "title must be at least 6 chars"],
-      // required: [true, "title is required"],
+    publicInfo: {
+      title: {
+        type: String,
+        required: [true, "title is required"],
+        minLength: [6, "title must be at least 6 chars"],
+      },
+      address: {
+        type: String,
+        required: [true, "address is required"],
+        minLength: [1, "address must be at least 1 chars"],
+      },
+      nearBy: {
+        type: String,
+        required: [true, "nearBy is required"],
+        minLength: [1, "nearBy must be at least 1 chars"],
+      },
+      publicRating: {
+        type: Number,
+        default: 0,
+        validate: {
+          validator: (v) => v >= 0 && v <= 5 && /^\d*(\.\d{1,2})?$/.test(v),
+          message:
+            "publicRating must be between 0 and 5 with up to 2 decimal places",
+        },
+      },
+      publicRatingCount: {
+        type: Number,
+        default: 0,
+      },
     },
     location: {
       type: {
@@ -27,10 +52,21 @@ const HotelsSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
-    address: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "HotelAddress",
+    branches: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "HotelBranch",
       required: false,
+      default: null,
+    },
+    reviews: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review",
+      required: false,
+      default: null,
+    },
+    reviewCount: {
+      type: Number,
+      default: 0,
     },
     description: {
       type: String,
@@ -63,6 +99,15 @@ const HotelsSchema = new mongoose.Schema(
         secure_url: {
           type: String,
           required: false,
+          validate: {
+            validator: (v) => {
+              return (
+                v.match(
+                  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
+                ) !== null
+              );
+            },
+          },
         },
       },
     ],
@@ -86,6 +131,16 @@ const HotelsSchema = new mongoose.Schema(
     slugName: {
       type: String,
       unique: true,
+    },
+    assignedModerators: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "user",
+      default: null,
+    },
+    assignedStaff: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "user",
+      default: null,
     },
   },
   { timestamps: true }

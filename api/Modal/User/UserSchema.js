@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import AuthRoles from "../Utils/AuthRoles.js";
+import { AuthRoles } from "../../Utils/AuthRoles.js";
 import jwt from "jsonwebtoken";
-import { salt } from "../Utils/Bycrpt-helper.js";
+import { salt } from "../../Utils/Bycrpt-helper.js";
 import bcrypt from "bcrypt";
 
 // const bcrypt = require("bcryptjs");
@@ -15,8 +15,16 @@ const UserSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: [true, "email is required"],
       unique: true,
+      validate: {
+        validator: (v) => {
+          const emailRegex =
+            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          return emailRegex.test(v);
+        },
+        message: (prop) => `${prop.value} is not a valid email address`,
+      },
     },
     password: {
       type: String,
@@ -34,8 +42,9 @@ const UserSchema = new mongoose.Schema(
       default: AuthRoles.USER,
     },
     address: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "UserAddress",
+      default: null,
     },
     emergencyContact: {
       type: Number,
@@ -70,4 +79,6 @@ UserSchema.methods = {
   },
 };
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema);
+
+export default User;

@@ -2,6 +2,24 @@ import mongoose from "mongoose";
 
 const HotelAddressSchema = new mongoose.Schema(
   {
+    plotName: {
+      type: String,
+      required: [true, "plotName is required"],
+    },
+    landmark: {
+      type: String,
+      required: [true, "landmark is required"],
+    },
+    latitude: {
+      type: Number,
+      required: false,
+      default: null,
+    },
+    longitude: {
+      type: Number,
+      required: false,
+      default: null,
+    },
     localArea: {
       type: String,
       required: [true, "localArea is required"],
@@ -28,7 +46,7 @@ const HotelAddressSchema = new mongoose.Schema(
     },
     slugName: {
       type: String,
-      unique: true,
+      // unique: true,
     },
     createdByUser: {
       type: mongoose.Schema.Types.ObjectId,
@@ -56,4 +74,5 @@ const HotelAddressSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("HotelAddress", HotelAddressSchema);
+const HotelAddress = mongoose.model("HotelAddress", HotelAddressSchema);
+export default HotelAddress;
