@@ -1,7 +1,7 @@
 import express from "express";
-import { asyncHandler } from "../Service/asyncHandler.js";
-import HotelAddress from "../Modal/HotelAddressSchema.js";
-import Hotels from "../Modal/HotelsSchema.js";
+import { asyncHandler } from "../../Service/asyncHandler.js";
+import HotelAddress from "../../Modal/Hotels/HotelAddressSchema.js";
+import Hotels from "../../Modal/Hotels/HotelsSchema.js";
 import mongoose from "mongoose";
 
 const router = express.Router();
@@ -11,21 +11,45 @@ const router = express.Router();
 export const createHotelAddress = asyncHandler(async (req, res) => {
   // console.log({ id: req.user._id });
   const user = req.user._id;
-  const hotelId = req.query.hotelId;
+  const hotelId = req.query.hotel;
 
-  const HotelExistsForUser = await Hotels.find({
+  const HotelExistsForUser = await Hotels.findOne({
     _id: hotelId,
-    createdByUser: user,
+    createdByUser: user.toString(),
   });
   // console.log({ user: user }, { userExists: userExists });
 
-  if (!HotelExistsForUser) return res.status(401).send("Hotel not found");
+  if (!HotelExistsForUser)
+    return res.status(401).send({
+      status: "Error",
+      message: "No hotel found with this id",
+      error: "Can't create address for this hotel",
+    });
 
   let response = [];
   try {
-    const { localArea, pinCode, city, state, country } = req.body;
+    const {
+      plotName,
+      landmark,
+      latitude,
+      longitude,
+      localArea,
+      pinCode,
+      city,
+      state,
+      country,
+    } = req.body;
 
     if (
+      !plotName ||
+      typeof plotName !== "string" ||
+      plotName.trim().length < 1 ||
+      !landmark ||
+      typeof landmark !== "string" ||
+      // !latitude ||
+      // typeof latitude !== "number" ||
+      // !longitude ||
+      // typeof longitude !== "number" ||
       !localArea ||
       typeof localArea !== "string" ||
       localArea.trim().length < 1 ||
@@ -54,11 +78,33 @@ export const createHotelAddress = asyncHandler(async (req, res) => {
     const locationStr = `${localAreaStr}-${pinCode}-${city
       .split(" ")
       .join("-")}`;
-    const slugName = `${hotelId?.slice(18) || ""}-${locationStr}`;
+    const plotSlug = plotName
+      .trim()
+      .replace(/[^\w ]+/g, "")
+      .replace(/ +/g, "-");
+    const slugName = `${hotelId?.slice(18)}-${user
+      ?.toString()
+      .slice(18)}-${locationStr}-${plotSlug}`;
 
     // console.log(slugName);
 
+    const addressExists = await HotelAddress.findOne({
+      slugName,
+      hotel: hotelId,
+      createdByUser: user,
+    }).lean();
+    if (addressExists)
+      return res.status(403).send({
+        status: "Error",
+        message: "Address already exists",
+        error: "Duplicate address",
+      });
+
     const address = new HotelAddress({
+      plotName,
+      landmark,
+      latitude: latitude ? latitude : null,
+      longitude: longitude ? longitude : null,
       localArea,
       pinCode,
       city,
@@ -70,34 +116,68 @@ export const createHotelAddress = asyncHandler(async (req, res) => {
     });
 
     const data = await address.save();
-    // console.log(data);
+    if (!data)
+      return res.status(500).send({
+        status: "Error",
+        message: "Could not create",
+        error: "Server Error",
+      });
+    response = data;
 
-    if (data) return (response = [...response, data]);
+    // once the address is created, update the hotel schema to have the address id
+    try {
+      await Hotels.findByIdAndUpdate(
+        { _id: hotelId, createdByUser: user },
+        {
+          $set: {
+            address: [
+              ...(HotelExistsForUser.address ? HotelExistsForUser.address : []),
+              data._id,
+            ],
+          },
+        }
+      );
+
+      const updatedHotel = await Hotels.findById({
+        _id: hotelId,
+        createdByUser: user,
+      }).populate("address");
+      response = updatedHotel;
+    } catch (error) {
+      console.error(error);
+      // res.append(
+      //   `${
+      //     ({ status: "Error" },
+      //     { message: "Address created but the hotel could not be updated." },
+      //     { error: "Hotel not found." })
+      //   }`
+      // );
+    }
 
     return res.status(201).send({
       status: "OK",
       message: "Address created for this hotel",
-      data: data,
+      Hotel: response,
     });
   } catch (e) {
     console.error(e);
     return res.status(401).send({ status: "Error", error: e.message });
-  } finally {
-    // after the hotelAddress is created in db, we need to update the hotels document to add the address id inside the address array of the hotel document
+    // } finally {
+    //   // after the hotelAddress is created in db, we need to update the hotels document to add the address id inside the address array of the hotel document
 
-    const updatedHotel = await Hotels.findByIdAndUpdate(hotelId, {
-      address: data._id,
-    });
-    updatedHotel ? response.push(updatedHotel) : null;
+    //   const updatedHotel = await Hotels.findByIdAndUpdate(hotelId, {
+    //     address: response._id,
+    //   });
+    //   updatedHotel ? response.push(updatedHotel) : null;
 
-    if (updatedHotel)
-      return res.send({
-        status: "OK",
-        message: "Address added to Hotel",
-        updateHotelAddress: response?.updatedAddress || [],
-      });
+    //   if (updatedHotel)
+    //     return res.send({
+    //       status: "OK",
+    //       message: "Address added to Hotel",
+    //       updateHotelAddress: response?.updatedAddress || [],
+    //     });
 
-    return res.status(500).send({ status: "Error", error: "Server error." });
+    //   return res.status(500).send({ status: "Error", error: "Server error." });
   }
 });
 
@@ -108,15 +188,26 @@ export const getAllHotelAddress = asyncHandler(async (req, res) => {
 
   if (id) {
     try {
-      const addresses = await HotelAddress.find({ hotel: id })
+      const addresses = await HotelAddress.find({ _id: id })
         .populate("hotel")
         .lean();
+
+      // console.log({ addresses: addresses });
+
+      if (addresses === null || addresses.length === 0) {
+        return res.status(404).send({
+          status: "Error",
+          error: "No address match this id",
+          message: "Address not found",
+        });
+      }
       res.status(200).json({ status: "OK", HotelAddress: addresses });
     } catch (err) {
+      console.error(err);
       res.status(404).send({
         status: "Error",
         error: err.message,
-        message: "User not found",
+        message: "Address not found",
       });
     }
   } else {
@@ -161,17 +252,37 @@ export const updateHotelAddress = asyncHandler(async (req, res) => {
   //   userId,
   //   hotel: req.query.hotel,
   //   user: new mongoose.Types.ObjectId(String(req.query.user)),
+  //   filter,
   // });
 
   if (userId.equals(req.query.user) === false)
     return res.status(401).send("Unauthorized");
 
   try {
-    const { localArea, pinCode, city, state, country } = req.body;
+    const {
+      plotName,
+      landmark,
+      latitude,
+      longitude,
+      localArea,
+      pinCode,
+      city,
+      state,
+      country,
+    } = req.body;
 
     // validate the data sent by the user is valid and then check if these are exactly same the data available in the db
 
     if (
+      !plotName ||
+      typeof plotName !== "string" ||
+      plotName.trim().length < 1 ||
+      !landmark ||
+      typeof landmark !== "string" ||
+      // !latitude ||
+      // typeof latitude !== "number" ||
+      // !longitude ||
+      // typeof longitude !== "number" ||
       !localArea ||
       typeof localArea !== "string" ||
       localArea.trim().length < 1 ||
@@ -200,10 +311,19 @@ export const updateHotelAddress = asyncHandler(async (req, res) => {
     const locationStr = `${localAreaStr}-${pinCode}-${city
       .split(" ")
       .join("-")}`;
-    const slugName = `${hotelId?.slice(18) || ""}-${locationStr}`;
+    const plotSlug = plotName
+      .trim()
+      .replace(/[^\w ]+/g, "")
+      .replace(/ +/g, "-");
+    const slugName = `${hotelId?.slice(18)}-${userId
+      ?.toString()
+      .slice(18)}-${locationStr}-${plotSlug}`;
 
     // check if address already exists
-    const address = await HotelAddress.findOne({ slugName });
+    const address = await HotelAddress.findOne({
+      slugName,
+      _id: { $ne: addressId },
+    });
     if (address) {
       return res.status(400).json({
         status: "Error",
@@ -213,13 +333,16 @@ export const updateHotelAddress = asyncHandler(async (req, res) => {
     }
 
     let updateBody = {
+      plotName,
+      landmark,
+      latitude: latitude ? latitude : null,
+      longitude: longitude ? longitude : null,
       localArea,
       pinCode,
       city,
       state,
       country,
       slugName,
-      updatedAt: new Date(),
     };
 
     const updatedAddress = await HotelAddress.findOneAndUpdate(
@@ -239,7 +362,7 @@ export const updateHotelAddress = asyncHandler(async (req, res) => {
     res.status(200).json({
       status: "OK",
       message: "Address updated successfully.",
-      updatedAddress: updatedAddress,
+      Address: updatedAddress,
     });
   } catch (err) {
     console.error(err);

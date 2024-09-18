@@ -1,9 +1,13 @@
-import User from "../Modal/UserSchema.js";
-import CustomError from "../Utils/CustomError.js";
-import jwt from "jsonwebtoken";
-import { asyncHandler } from "../Service/asyncHandler.js";
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import CustomError from "../Utils/CustomError.js";
+import User from "../Modal/User/UserSchema.js";
+import Vendor from "../Modal/User/VendorSchema.js";
+import HotelBranch from "../Modal/Hotels/HotelBranchSchema.js";
+import { asyncHandler } from "../Service/asyncHandler.js";
 import { cookiesOptions, generateJWT } from "../Utils/JWT-helper.js";
+import { AuthRoles } from "../Utils/AuthRoles.js";
 
 // ? register/ signup
 export const singUp = asyncHandler(async (req, res) => {
@@ -36,7 +40,6 @@ export const singUp = asyncHandler(async (req, res) => {
 });
 
 // ? login
-
 export const Login = asyncHandler(async (req, res) => {
   const { email, password, phone = null } = req.body;
 
@@ -93,15 +96,19 @@ export const updateProfile = asyncHandler(async (req, res) => {
 
 // ? get profile
 export const getProfile = asyncHandler(async (req, res) => {
-  const { token } = req.cookies;
-  if (token) {
-    const { _id } = jwt.verify(token, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    const user = await User.findById({ _id });
+  const { user } = req;
+  if (!user)
+    return res
+      .status(404)
+      .send({
+        status: "Error",
+        message: "not logged in",
+        error: "User not found",
+      });
 
-    return res.send({ user });
-  }
+  return res
+    .status(200)
+    .send({ status: "OK", message: "user found", user: user });
 });
 
 // ? logout
@@ -110,4 +117,137 @@ export const logout = asyncHandler(async (req, res) => {
     expires: new Date(0),
   });
   return res.send({ user: {} });
+});
+
+export const updateUserRole = asyncHandler(async (req, res) => {
+  const { _id: loggedInUser, role: loggedInRole } = req.user;
+  const { ChangeRoleTo } = req.body;
+  // console.log(
+  //   loggedInUser.equals(new mongoose.Types.ObjectId(String(req.query.user))),
+  //   true === false
+  // );
+
+  if (!ChangeRoleTo || AuthRoles[ChangeRoleTo] === false)
+    return res.status(204).json({
+      status: "Error",
+      message: "Invalid request",
+      error: "Invalid role",
+    });
+
+  // if (!loggedInUser.equals(new mongoose.Types.ObjectId(String(req.query.user))))
+  //   return res.status(401).json({
+  //     status: "Error",
+  //     message: "Unauthorized access attempted",
+  //     error: "Unauthorized",
+  //   });
+
+  // get the user details for the query user
+  const queryUser = await User.findOne({ _id: req.query.user }).lean();
+  if (!queryUser)
+    return res.status(404).json({
+      status: "Error",
+      message: "User not found",
+      error: "User not found",
+    });
+
+  let updatedDocs = [];
+
+  // if the query and logged in user are same then go ahead and update the role
+  if (
+    (loggedInRole === queryUser.role) === "USER" &&
+    ["OWNER", "MODERATOR"].includes(ChangeRoleTo)
+  ) {
+    let updatedUser;
+    try {
+      // Update the User
+      updatedUser = await User.findByIdAndUpdate(
+        { _id: queryUser._id.toString() },
+        { $set: { role: ChangeRoleTo } },
+        { new: true }
+      );
+
+      updatedDocs.push(updatedUser ? updatedUser : {});
+    } catch (error) {
+      return res.status(500).json({
+        status: "Error",
+        message: `Cannot update user role because - ${error.message}`,
+        error: error.message,
+      });
+    }
+    return res.status(202).send({
+      status: "OK",
+      message: "User updated",
+      user: updatedUser,
+      updatedDocs: updatedDocs,
+    });
+  } else if (
+    // if the logged in user is the owner and the query user is the staff or manager then go ahead and update the role
+    loggedInRole === "OWNER" &&
+    (queryUser.role === "STAFF" || queryUser.role === "MODERATOR")
+  ) {
+    let updatedUser = undefined;
+
+    // Update the User
+    try {
+      updatedUser = await User.findByIdAndUpdate(
+        { _id: queryUser._id },
+        { $set: { role: ChangeRoleTo } },
+        { new: true }
+      );
+
+      // Update the HotelBranch and Vendor documents
+      let hotelBranches = await HotelBranch.updateMany(
+        { parentHotel: loggedInUser },
+        {
+          $push: {
+            [ChangeRoleTo === "MODERATOR"
+              ? "assignedModerators"
+              : "assignedStaff"]: queryUser._id,
+          },
+        }
+      );
+
+      // Update the Vendor documents
+      let vendors = await Vendor.updateMany(
+        { userFor: loggedInUser },
+        {
+          $push: {
+            [ChangeRoleTo === "MODERATOR"
+              ? "assignedModerators"
+              : "assignedStaff"]: queryUser._id,
+          },
+        }
+      );
+
+      updatedDocs = [...hotelBranches, ...vendors, updatedUser];
+    } catch (error) {
+      return res.status(500).json({
+        status: "Error",
+        message: `Cannot update user role because - ${error.message}`,
+        error: error.message,
+      });
+    }
+    return res.status(202).send({
+      status: "OK",
+      message: `User role updated to ${ChangeRoleTo}`,
+      user: updatedUser,
+      updatedDocs: updatedDocs,
+    });
+  } else if (loggedInRole === "OWNER" && queryUser.role === "OWNER") {
+    return res.status(200).json({
+      status: "OK",
+      message: "Already owner",
+      error: "Needless change",
+      updateUser: queryUser,
+      updatedDocs: updatedDocs,
+    });
+  } else {
+    return res.status(403).json({
+      status: "Error",
+      message: "Role change not allowed",
+      error: "Unauthorized",
+      updateUser: null,
+      updatedDocs: updatedDocs,
+    });
+  }
 });
