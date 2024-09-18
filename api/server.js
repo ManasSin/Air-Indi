@@ -3,9 +3,9 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import { router as AuthRoute } from "./Routes/Auth.route.js";
-import { router as HotelsRoutes } from "./Routes/Hotel.route.js";
-import { router as HotelAddressRoute } from "./Routes/HotelAddress.route.js";
+import { router as AuthRoute } from "./Routes/Auth&Users/Auth.route.js";
+import { router as HotelsRoutes } from "./Routes/Hotel/index.js";
+import { router as BookingRoutes } from "./Routes/Booking/Booking.route.js";
 import { errorHandler } from "./Middlewares/errorHandler.js";
 
 const app = express();
@@ -32,8 +32,11 @@ app.use((req, res, next) => {
 
 // routes
 app.use("/api/user", AuthRoute);
-app.use("/api/hotelAddress", HotelAddressRoute);
 app.use("/api/hotel", HotelsRoutes);
+app.use("/api/booking", BookingRoutes);
+app.use("*", (req, res) => {
+  res.status(404).json({ status: "Error", message: "Page not found" });
+});
 
 //connecting with mongo
 mongoose
