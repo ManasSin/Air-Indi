@@ -5,8 +5,8 @@ import {
   getHotelAddressByID,
   updateHotelAddress,
   deleteHotelAddress,
-} from "../Controllers/HotelAddressController.js";
-import { isLoggedIn } from "../Middlewares/isLoggedIn.js";
+} from "../../Controllers/Hotels/HotelAddressController.js";
+import { isLoggedIn } from "../../Middlewares/isLoggedIn.js";
 
 export const router = Router();
 

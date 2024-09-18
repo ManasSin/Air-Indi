@@ -6,8 +6,9 @@ import {
   updateHotel,
   deleteHotel,
   listHotelsByUser,
-} from "../Controllers/HotelController.js";
-import { isLoggedIn } from "../Middlewares/isLoggedIn.js";
+  listPublicHotels,
+} from "../../Controllers/Hotels/HotelController.js";
+import { isLoggedIn } from "../../Middlewares/isLoggedIn.js";
 
 export const router = Router();
 
@@ -15,6 +16,7 @@ router.route("/").get(getHotels);
 router
   .route("/user")
   // .get(isLoggedIn, getHotelsByIds)
+  .get(listPublicHotels)
   .get(isLoggedIn, listHotelsByUser)
   .put(isLoggedIn, updateHotel)
   .delete(isLoggedIn, deleteHotel);
