@@ -6,7 +6,9 @@ import cookieParser from "cookie-parser";
 import { router as AuthRoute } from "./Routes/Auth&Users/Auth.route.js";
 import { router as HotelsRoutes } from "./Routes/Hotel/index.js";
 import { router as BookingRoutes } from "./Routes/Booking/Booking.route.js";
+import { router as RoomRoutes } from "./Routes/Rooms/Room.route.js";
 import { errorHandler } from "./Middlewares/errorHandler.js";
+import { checkBookingTime } from "./Utils/CheckBookingTime.cron.js";
 
 const app = express();
 dotenv.config();
@@ -34,6 +36,7 @@ app.use((req, res, next) => {
 app.use("/api/user", AuthRoute);
 app.use("/api/hotel", HotelsRoutes);
 app.use("/api/booking", BookingRoutes);
+app.use("/api/rooms", RoomRoutes);
 app.use("*", (req, res) => {
   res.status(404).json({ status: "Error", message: "Page not found" });
 });
@@ -46,6 +49,9 @@ mongoose
     // listen to port
     app.listen(process.env.PORT || 8080, () => {
       console.log("Server is running on port 4000");
+
+      // start cron job
+      checkBookingTime();
     })
   )
   .catch((err) => {
