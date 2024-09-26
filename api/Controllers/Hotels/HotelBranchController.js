@@ -269,37 +269,24 @@ export const createHotelBranch = asyncHandler(async (req, res) => {
         status: "pending",
       });
 
-      const data = await hotelBranch.save();
+      let branch;
+      let updatedHotel;
 
-      if (!data) {
-        return res.status(500).json({
-          status: "Error",
-          message: "Error creating hotel branch",
-          error: "Internal server error",
-        });
-      }
-
-      const updatedHotel = await Hotels.findByIdAndUpdate(
-        hotelId,
-        {
-          $push: { branches: data._id },
-        },
-        { new: true }
-      ).populate("branches");
-
-      if (!updatedHotel) {
-        return res.status(500).json({
-          status: "Error",
-          message: "Error creating hotel branch",
-          error: "Error adding branch to hotel",
-        });
-      }
+      await Promise.all([
+        (branch = await hotelBranch.save()),
+        (updatedHotel = await Hotels.findByIdAndUpdate(
+          hotelId,
+          {
+            $push: { branches: data._id },
+          },
+          { new: true }
+        ).populate("branches")),
+      ]);
 
       res.status(202).send({
         status: "OK",
         message: "Hotel branch created successfully",
-        hotelBranch: data,
-        updatedParentHotel: updatedHotel,
+        data: { branch, updatedHotel },
       });
     } catch (error) {
       res.status(500).json({

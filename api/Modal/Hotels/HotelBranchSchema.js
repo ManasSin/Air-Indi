@@ -13,6 +13,15 @@ const HotelBranchSchema = new mongoose.Schema(
       required: false,
       default: null,
     },
+    bookings: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Booking",
+      default: [],
+    },
+    bookingCount: {
+      type: Number,
+      default: 0,
+    },
     branchName: {
       type: String,
       required: true,
