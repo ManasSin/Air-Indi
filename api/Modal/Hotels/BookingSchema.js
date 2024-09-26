@@ -11,6 +11,11 @@ const bookingSchema = new mongoose.Schema({
     ref: "HotelBranch",
     required: true,
   },
+  roomId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Room",
+    required: true,
+  },
   checkInDate: {
     type: Date,
     required: true,
@@ -89,19 +94,27 @@ const bookingSchema = new mongoose.Schema({
   isCancelled: {
     type: Boolean,
     default: false,
-    cancellationReason: {
-      type: String,
-      default: "",
-      required: function () {
-        return this.isCancelled;
-      },
+  },
+  cancellationReason: {
+    type: String,
+    default: "",
+    required: function () {
+      return this.status === true;
     },
-    cancellationDate: {
-      type: Date,
-      default: Date.now,
-      required: function () {
-        return this.isCancelled;
-      },
+  },
+  deletedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+    required: function () {
+      return this.status === true;
+    },
+  },
+  cancellationDate: {
+    type: Date,
+    default: Date.now,
+    required: function () {
+      return this.status === true;
     },
   },
 });
